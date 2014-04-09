@@ -21,8 +21,11 @@ grad = zeros(size(theta));
 %
 
 h = sigmoid(X * theta);
-penalty = (-y' * log(h)) - ((1-y)' * log(1 - h));
+
+penalty = -y' * log(h) - (1-y)' * log(1 - h);
 J = 1 / m * penalty;
+
+grad = 1 / m * (h - y)' * X;
 
 % =============================================================
 
