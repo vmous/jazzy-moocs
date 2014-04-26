@@ -78,10 +78,18 @@ a3 = sigmoid(z3);
 
 h = a3;
 
-regularization = (lambda/(2 * m)) * (sum(sum(Theta1(:,2:end) .^ 2)) + sum(sum(Theta2(:,2:end) .^ 2)));
+regularization = (lambda / (2 * m)) * (sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2)));
 
 J = (1/m) * sum(sum(-y .* log(h) - (1 - y) .* log(1 - h))) + regularization;
 
+d3 = a3 - y;
+d2 = d3 * Theta2(:, 2:end) .* sigmoidGradient(z2);
+
+Delta1 = d2' * a1;
+Delta2 = d3' * a2;
+
+Theta1_grad = (1 / m) * Delta1;
+Theta2_grad = (1 / m) * Delta2;
 % -------------------------------------------------------------
 
 % =========================================================================
