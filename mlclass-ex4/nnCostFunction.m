@@ -78,7 +78,9 @@ a3 = sigmoid(z3);
 
 h = a3;
 
-J = (1/m) * sum(sum(-y .* log(h) - (1 - y) .* log(1 - h)));
+regularization = (lambda/(2 * m)) * (sum(sum(Theta1(:,2:end) .^ 2)) + sum(sum(Theta2(:,2:end) .^ 2)));
+
+J = (1/m) * sum(sum(-y .* log(h) - (1 - y) .* log(1 - h))) + regularization;
 
 % -------------------------------------------------------------
 
