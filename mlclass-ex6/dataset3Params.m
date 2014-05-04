@@ -24,10 +24,23 @@ sigma = 0.3;
 %
 
 
+Cvec = [0.01, 0.03, 0.1, 0.3, 1.3, 10, 30];
+sigmavec = [0.01, 0.03, 0.1, 0.3, 1.3, 10, 30];
 
+result = [];
+minimum = [0 0 0];
 
+for i = 1:length(Cvec),
+    for j = 1:length(sigmavec),
+        model = svmTrain(X, y, Cvec(i), @(x1, x2) gaussianKernel(x1, x2, sigmavec(j)));
+        predictions = svmPredict(model, Xval);
+        result = [result; mean(double(predictions ~= yval)) Cvec(i) sigmavec(j)];
+    end;
+end;
 
-
+minimum = sortrows(result)(1, :);
+C = minimum(2);
+sigma = minimum(3);
 
 % =========================================================================
 
