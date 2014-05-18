@@ -43,7 +43,9 @@ Theta_grad = zeros(size(Theta));
 predictions = X * Theta';
 consideredErrors = (predictions .- Y) .* R;
 consideredSquaredErrors = (consideredErrors) .^ 2;
-J = (1 / 2) .* sum(sum((consideredSquaredErrors) .* R));
+J = (1 / 2) .* sum(sum((consideredSquaredErrors) .* R)) + ...
+    (lambda / 2) * sum(sum(X .^ 2)) + ...
+    (lambda / 2) * sum(sum(Theta .^ 2));
 
 X_grad = consideredErrors * Theta;
 Theta_grad = consideredErrors' * X;
