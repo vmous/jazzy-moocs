@@ -21,16 +21,13 @@ sigma2 = zeros(n, 1);
 %               should contain variance of the i-th feature.
 %
 
+%mu = (1 / m) * sum(X);
+mu = mean(X);
 
-
-
-
-
-
-
-
+% The line bellow requires broadcasting for the - operand.
+%sigma2 = (1 / m) * sum((X - mu) .^ 2);
+sigma2 = var(X, 1);
 
 % =============================================================
-
 
 end
