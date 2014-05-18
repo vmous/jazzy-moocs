@@ -47,8 +47,8 @@ J = (1 / 2) .* sum(sum((consideredSquaredErrors) .* R)) + ...
     (lambda / 2) * sum(sum(X .^ 2)) + ...
     (lambda / 2) * sum(sum(Theta .^ 2));
 
-X_grad = consideredErrors * Theta;
-Theta_grad = consideredErrors' * X;
+X_grad = (consideredErrors * Theta) + (lambda .* X);
+Theta_grad = (consideredErrors' * X) + (lambda .* Theta);
 
 % =============================================================
 
