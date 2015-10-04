@@ -1,1 +1,2 @@
-Exercises from the Stanford Machine Learning Coursera course.
+# Jazzy Massive Open On-line Courses 
+Machine Learning - Stanford University (Coursera)
