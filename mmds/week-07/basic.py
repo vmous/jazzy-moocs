@@ -17,6 +17,12 @@ the teleport probability, (1 - beta), is 0.3. Which of the following statements
 is correct?
 
 https://d396qusza40orc.cloudfront.net/mmds/images/otc_pagerank4.gif
+
+Question Explanation
+
+"the weight assigned for node 1 is twice that of node 2" means that given a
+random walker and its current position, its teleport probability to node 1 is
+twice that to node 2. 
 '''
 def question_1():
     b = 0.7
@@ -59,6 +65,41 @@ Note: To arrive at this form, it is necessary at the last step to drop a
 low-order term that is a fraction of 1/n. Determine coefficients a, b, and c,
 remembering that β is fixed at 0.85. Then, identify the value, correct to two
 decimal places, for one of these coefficients.
+
+Question Explanation
+
+Let w be the PageRank of each of the second-tier pages, and let z be the
+PageRank of each of the supporting pages. Then the equations relating
+y, w, and z are:
+
+y = x + βzm + (1-β)/n
+w = βy/k + (1-β)/n
+z = βkw/m + (1-β)/n
+
+The first equation says that the PageRank of t is the external contribution x,
+plus βz (the amount of PageRank not taxed) times the number of supporting pages,
+plus (1-β)/n, which is the share of "tax" that every page gets. The second
+equation says that each second-tier page gets 1/k-th of the untaxed PageRank
+of t, plus its share of the tax. The third equation says each supporting page
+gets 1 part in m/k of the untaxed PageRank of the second-tier page that reaches
+that supporting page, plus its share of the tax.
+
+Begin by substituting for z in the first equation:
+
+y = x + (β^2)kw + β(1-β)m/n + (1-β)/n
+
+Now, substitute for w in the above:
+
+y = x + (β^3)y + β(1-β)m/n + (β^2)(1-β)k/n + (1-β)/n
+
+Neglect the last term (1-β)/n, per the directions in the statement of the problem.
+If we move the term β3y to the left, and note that β3 = (1-β)(1+β+β^2), we get
+
+y = x/(1-β^3) + (β/(1+β+β^2))(m/n) + (β^2/(1+β+β^2))(k/n)
+
+For β = 0.85, these coefficients evaluate to:
+
+y = 2.59x + 0.33(m/n) + 0.28(k/n)
 '''
 def question_2():
     # y: PageRank of target page

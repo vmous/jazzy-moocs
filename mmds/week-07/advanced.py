@@ -16,6 +16,15 @@ three functions from h and the AND-construction to form a (d1,d2,w,x) family,
 and we can use two functions from h and the OR-construction to form a
 (d1,d2,y,z) family. Calculate w, x, y, and z, and then identify the correct
 value of one of these in the list below. 
+
+Question Explanation
+
+When we use the AND-construction with three hash functions, we cube the
+probabilities associated with h. Thus, w=.216 and x=.064. To get the
+probabilities associated with the OR-construction on two hash functions, we take
+each probability associated with h, subtract it from 1, square the result, and
+subtract that from 1. Thus, .6 becomes 1-(1-.6)^2 = .84, and .4 becomes
+1-(1-.4)^2 = .64.
 '''
 def question_1():
     a = 0.6
@@ -52,6 +61,24 @@ scheme of Section 3.9.4 based on symbols appearing in the prefix (no position
 or length information). For each of s1, s3, and s6, determine how many other
 strings that string will be compared with, if it is used as the probe string.
 Then, identify the true count from the list below. 
+
+Question Explanation
+
+First, we index a string of length L on the symbols appearing in its prefix of
+length floor(0.2L+1). Thus, strings of length 5 and 6 are indexed on their first
+two symbols, while strings of length 4 are indexed on their first symbol only.
+Thus, the index for a consists of {s1, s2, s4, s8}; the index for b consists of
+{s1, s3, s5, s6}, the index for c consists of {s2, s3, s5, s7}, and no other
+symbol is indexed at all.
+
+For s1, we examine the indexes for a and b, which contains all strings but s7.
+Thus, s1 is compared with 6 other strings.
+
+For s3, we examine the indexes for b and c, which together contain
+s1, s2, s3, s5, s6, and s7. Thus, s3 is compared with five other strings.
+
+For s6, we examine only the index for b. Thus, s6 is compared only with the
+three other strings s1, s3, and s5. 
 '''
 def question_2():
     strs = {
@@ -97,14 +124,38 @@ https://d396qusza40orc.cloudfront.net/mmds/images/otc_pagerank4.gif
 First, construct the L, the link matrix, as discussed in Section 5.5 on the
 HITS algorithm. Then do the following:
 
-1. Start by assuming the hubbiness of each node is 1; that is, the vector h is (the transpose of) [1,1,1,1].
-2. Compute an estimate of the authority vector a=LTh.
-3. Normalize a by dividing all values so the largest value is 1.
-4. Compute an estimate of the hubbiness vector h=La.
-5. Normalize h by dividing all values so the largest value is 1.
-6. Repeat steps 2-5.
+ 1. Start by assuming the hubbiness of each node is 1; that is, the vector h is
+    (the transpose of) [1,1,1,1].
+ 2. Compute an estimate of the authority vector a=LTh.
+ 3. Normalize a by dividing all values so the largest value is 1.
+ 4. Compute an estimate of the hubbiness vector h=La.
+ 5. Normalize h by dividing all values so the largest value is 1.
+ 6. Repeat steps 2-5.
 
 Now, identify in the list below the true statement about the final estimates.
+
+Question Explanation
+
+Here is the matrix L:
+
+0 1 1 0
+1 0 0 0
+0 0 0 1
+0 0 1 0
+
+In what follows, all vectors will be written as rows, i.e., in transposed form.
+We start with h = [1,1,1,1] and compute LTh = [1,1,2,1]. Since the largest value
+is 2, we divide all values by 2, giving us the first estimate
+a = [1/2,1/2,1,1/2].
+
+Next, we compute La = [3/2,1/2,1/2,1] and normalize by multiplying by 2/3 to get
+h = [1,1/3,1/3,2/3].
+
+The next calculation of a from the estimate of h gives LTh = [1/3,1,5/3,1/3],
+and normalizing gives a = [1/5,3/5,1,1/5].
+
+For the final estimate of h we compute La = [8/5,1/5,1/5,1], which after
+normalizing gives h = [1,1/8,1/8,5/8].
 '''
 def question_3():
     # Link matrix
@@ -166,12 +217,32 @@ Note. There are some additional optimizations one can think of, such as striping
 the old score vector, encoding introvert and extrovert pages using different
 schemes, etc. For the purposes of working this problem, assume we don't do any
 optimizations beyond the block-stripe algorithm discussed in class.
+
+Question Explanation
+
+The number of bytes involved in reading the old pagerank vector and writing the
+new pagerank vector to disk = 4 (k+1) N
+For the M matrix:
+ - The introvert pages will appear xN times and each row will have on average 23
+   entries (3 metadata and 20 destination links). Total number of bytes
+   read = 4*23 xN
+ - The extrovert pages will appear (1-x) kN times and each row will have
+   3 (metadata) + 20/k (destination links) entries on average. Total number of
+   bytes read = 4 * (3+20/k) * (1-x) kN Total I/O per pagerank iteration (in GB,
+   where 1GB ~ 10^9 = N bytes) = 4 [(k+1) N + 23 xN + (3k + 20) (1-x) N] / N = 4 [(k+1) + 23 x + (3k + 20) (1-x)] = 4 [21 + k + 3 (x + (1-x) k)]
 '''
 def question_4():
+    data = [
+        (3, 0.75),
+        (2, 0.5),
+        (3, 0.5),
+        (3, 0.75)
+    ]
+
     def f(k, x):
         return 4*(21 + k + 3*(x + (1 - x)*k))
 
-    print([f(k, x) for k, x in [(2, 0.5), (2, 0.75), (3, 0.75), (3, 0.5)]]) 
+    print([f(k, x) for k, x in data]) 
 
 
 def main():
