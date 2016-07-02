@@ -2,9 +2,13 @@ package lecturecode
 
 object HighOrderFunctions {
 
-  /** Summation function */
+  /** Tail recursive summation function. */
   def sum(f: Int => Int, a: Int, b: Int): Int = {
-    if (a > b) 0 else f(a) + sum(f, a + 1, b)
+    def loop(a: Int, acc: Int): Int = {
+      if (a > b) acc
+      else loop(a + 1, acc + f(a))
+    }
+    loop(a, 0)
   }
 
   /** Take the sum of the integers between a and b. */
