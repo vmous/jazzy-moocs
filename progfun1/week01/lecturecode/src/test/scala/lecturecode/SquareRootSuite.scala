@@ -15,7 +15,23 @@ class SquareRootSuite extends FunSuite {
   }
 
   test("square root of 4") {
-    assert(sqrt(4) ===  2.0000000929222947)
+    assert(sqrt(4) ===  2.000609756097561)
+  }
+
+  test("square root of 0.001") {
+    assert(sqrt(0.001) === 0.03162278245070105)
+  }
+
+  test("square root of 1.0e-20") {
+    assert(sqrt(1.0e-20) ===  1.0000021484861236E-10)
+  }
+
+  test("square root of 1.0e20") {
+    assert(sqrt(1.0e20) === 1.0000021484861237E10)
+  }
+
+  test("square root of 1.0e60") {
+    assert(sqrt(1.0e60) ===  1.0000788456669446E30)
   }
 
 }
