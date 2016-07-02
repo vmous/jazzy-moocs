@@ -8,18 +8,10 @@ object HighOrderFunctions {
   }
 
   /** Take the sum of the integers between a and b. */
-  def sumInts(a: Int, b: Int): Int = {
-    def id(x: Int): Int = x
-
-    sum(id, a, b)
-  }
+  def sumInts(a: Int, b: Int): Int = sum(x => x, a, b)
 
   /** Take the sum of cubes of integers between a and b. */
-  def sumCubes(a: Int, b: Int): Int = {
-    def cube(x: Int): Int = x * x * x
-
-    sum(cube, a, b)
-  }
+  def sumCubes(a: Int, b: Int): Int = sum(x => x * x * x, a, b)
 
   /** Take the sum of factorials between a and b. */
   def sumFactorials(a: Int, b: Int): Int = {
