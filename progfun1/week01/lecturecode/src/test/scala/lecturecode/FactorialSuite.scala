@@ -14,4 +14,8 @@ class FactorialSuite extends FunSuite {
     assert(factorial(4) === 24)
   }
 
+  test("factorial of 4 with tail recursion") {
+    assert(factorial_tailrec(4) === 24)
+  }
+
 }
