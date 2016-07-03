@@ -25,6 +25,9 @@ object FixedPoint {
    * Concequently, sqrt(x) is a fixed point of the function (y => x / y)
    */
 
+  /** Stabilizing by averaging. */
+  def averageDamp(f: Double => Double)(x: Double) = (x + f(x)) / 2
+
   /**
     * Square root function implemented as a fixed point.
     * 
@@ -40,6 +43,6 @@ object FixedPoint {
     * we take the average of two successive values that would give us 1.5 and
     * that would set us on the right path to convergence.
     */
-  def sqrt(x: Double): Double = fixedPoint(y => (y + x / y) / 2)(1.0)
+  def sqrt(x: Double): Double = fixedPoint(averageDamp(y => x / y))(1.0)
 
 }
