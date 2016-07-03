@@ -19,25 +19,36 @@ object Currying {
     loop(1, n)
   }
 
-  /** Summation function */
-  def sum(f: Int => Int, a: Int, b: Int): Int = {
-    if (a > b) 0 else f(a) + sum(f, a + 1, b)
+  /**
+    * Summation function.
+    * 
+    * The summation function now does not define the interval parameters.
+    * It just returns a function that is defined internally.
+    * Note that the return type is (Int, Int) => Int which means it is a
+    * function that takes two integers and returns one integer. The two
+    * interger parameters defined in the return type are mapped to the
+    * internal function's (sumFunction) arguments, which are the interval
+    * parameters we eliminated from sum's signature. The returned function,
+    * sumFunction, applies the given function parameter f and sums the
+    * results.
+    */
+  def sum(f: Int => Int): (Int, Int) => Int = {
+    def sumFunction(a: Int, b: Int): Int = {
+      if (a > b) 0
+      else f(a) + sumFunction(a + 1, b)
+    }
+    sumFunction
   }
 
-  /*
-   * Note the repetition below:
-   * a and b get passed unchanged from sumInts and sumCubes and sumFactorials
-   * into sum.
-   * Can we be even shorter by getting rid of these parameters?
-   */
+  /* Note there is no argument repetition below anymore! */
 
   /** Take the sum of the integers between a and b. */
-  def sumInts(a: Int, b: Int): Int = sum(id, a, b)
+  def sumInts = sum(id)
 
   /** Take the sum of cubes of integers between a and b. */
-  def sumCubes(a: Int, b: Int): Int = sum(cube, a, b)
+  def sumCubes = sum(cube)
 
   /** Take the sum of factorials between a and b. */
-  def sumFactorials(a: Int, b: Int): Int = sum(factorial_tailrec, a, b)
+  def sumFactorials = sum(factorial_tailrec)
 
 }
