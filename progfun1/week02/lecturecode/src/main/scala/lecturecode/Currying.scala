@@ -31,6 +31,15 @@ object Currying {
     * parameters we eliminated from sum's signature. The returned function,
     * sumFunction, applies the given function parameter f and sums the
     * results.
+    * 
+    * In general:
+    *     def f(args_1)...(args_n) = E
+    * where n > 1, is equivalent to:
+    *     def f(args_1)...(args_n-1) = { def g(args_n) = E; g }
+    * or for short:
+    *     def f(args_1)..(args_n-1) = (args_n => E)
+    * and repeating that expansion n times we get the currying defition
+    *     def f = (args_1 => (args_2 => ...(args_n => E)...))
     */
   def sum(f: Int => Int): (Int, Int) => Int = {
     def sumFunction(a: Int, b: Int): Int = {
@@ -40,15 +49,9 @@ object Currying {
     sumFunction
   }
 
-  /* Note there is no argument repetition below anymore! */
-
-  /** Take the sum of the integers between a and b. */
-  def sumInts = sum(id)
-
-  /** Take the sum of cubes of integers between a and b. */
-  def sumCubes = sum(cube)
-
-  /** Take the sum of factorials between a and b. */
-  def sumFactorials = sum(factorial_tailrec)
+  /* Note there is no need for the "middlemen" functions at all!
+   * Check the application in the respective scalatest class for a detailed
+   * explanation of why this is the case.
+   */
 
 }
