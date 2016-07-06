@@ -17,9 +17,9 @@ object Rational {
       val a_abs = abs(a)
       if (b == 0) a_abs else gcd(b, a_abs % b)
     }
-    private val g = gcd(x, y)
-    def numer = x / g
-    def denom = y / g
+
+    def numer = x
+    def denom = y
 
     def less(that: Rational): Boolean = numer * that.denom < that.numer * denom
 
@@ -36,7 +36,11 @@ object Rational {
 
     def sub(that: Rational): Rational = add(that.neg)
 
-    override def toString(): String = numer + "/" + denom
+    override def toString(): String = {
+      val g = gcd(x, y)
+      numer / g + "/" + denom / g
+    }
+
   }
 
 }
