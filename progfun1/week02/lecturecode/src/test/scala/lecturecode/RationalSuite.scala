@@ -14,6 +14,15 @@ class RationalSuite extends FunSuite {
   val y = new Rational.Rational(5, 7)
   val z = new Rational.Rational(3, 2)
 
+  test("is x less than y") {
+    assert(x.less(y))
+  }
+
+  test("what is the max of x and y?") {
+    val res = x.max(y)
+    assert(res.numer === 5 && res.denom === 7)
+  }
+
   test("negative 1/3") {
     val res = x.neg
     assert(res.numer === -1 && res.denom === 3)    
