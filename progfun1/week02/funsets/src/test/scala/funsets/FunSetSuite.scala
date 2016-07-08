@@ -77,6 +77,7 @@ class FunSetSuite extends FunSuite {
     val s1 = singletonSet(1)
     val s2 = singletonSet(2)
     val s3 = singletonSet(3)
+    val s1001 = singletonSet(1001)
   }
 
   /**
@@ -97,7 +98,9 @@ class FunSetSuite extends FunSuite {
        * The string argument of "assert" is a message that is printed in case
        * the test fails. This helps identifying which assertion failed.
        */
-      assert(contains(s1, 1), "Singleton")
+      assert(contains(s1, 1), "Singleton 1")
+      assert(!contains(s1, 2), "Singleton 2")
+      assert(!contains(s1, 3), "Singleton 3")
     }
   }
 
@@ -110,5 +113,127 @@ class FunSetSuite extends FunSuite {
     }
   }
 
+  test("intersection is empty when there are no same elements") {
+    new TestSets {
+      val s = intersect(s1, s2)
+      assert(!contains(s, 1))
+      assert(!contains(s, 2))
+      assert(!contains(s, 3))
+    }
+  }
+
+  test("intersection contains common elements only") {
+    new TestSets {
+      val s = union(s1, s2)
+      val t = union(s1, s3)
+      val i = intersect(s,t)
+      assert(contains(i, 1), "intersect 1")
+      assert(!contains(i, 2), "intersect 2")
+      assert(!contains(i, 3), "intersect 3")
+    }
+  }
+
+  test("diff contains only elements which are not in opposing set") {
+    new TestSets {
+      val u1 = union(s1, s2)
+      val u2 = union(s1, s3)
+      val d =  diff(u1, u2)
+
+      assert(contains(d, 2))
+      assert(!contains(d, 3))
+      assert(!contains(d, 1))
+    }
+  }
+
+  test("filter selects only elements accepted by predicate") {
+    new TestSets {
+      val predicate = (x: Int) => x % 2 != 0
+
+      val u = union(s1, union(s2, s3))
+
+      val f = filter(u, predicate)
+
+      assert(contains(f, 1))
+      assert(contains(f, 3))
+      assert(!contains(f, 2))
+      assert(!contains(f, 5))
+    }
+  }
+
+  test("filter works like intersection") {
+    new TestSets {
+      val s = union(s1, s2)
+      val f = filter(s, (_ == 1))
+      assert(contains(f, 1), "filter 1")
+      assert(!contains(f, 2), "filter 2")
+    }
+  }
+
+  test("forall checks if all elements of the set are accepted by predicate") {
+    new TestSets {
+      val predicate1 = (x: Int) => x > 0
+      val predicate2 = (x: Int) => x % 2 != 0
+      val u = union(s1, union(s2, s3))
+
+      assert(forall(u, predicate1))
+      assert(!forall(u, predicate2))
+    }
+  }
+
+  test("forall continued") {
+    new TestSets {
+      val s = union(union(s1, s2), union(s3, s1001))
+
+      assert(forall(s, (_ < 4)))
+      assert(!forall(s, (_ < 2)))
+    }
+  }
+
+  test("exists checks if at least one element is accepted by predicate") {
+    new TestSets {
+      val predicate1 = (x: Int) => x > 2
+      val predicate2 = (x: Int) => x < 0
+      val u = union(s1, union(s2, s3))
+
+      assert(exists(u, predicate1))
+      assert(!exists(u, predicate2))
+    }
+  }
+
+  test("exists continued") {
+    new TestSets {
+      val s = union(union(s1, s2), union(s3, s1001))
+
+      assert(exists(s, (_ < 4)))
+      assert(exists(s, (_ < 2)))
+      assert(!exists(s, (_ < 0)))
+    }
+  }
+
+  test("map transforms all elements by given function") {
+    new TestSets {
+      val u = union(s1, union(s2, s3))
+      val m = map(u, (x: Int) => x * x)
+
+      assert(contains(m, 1))
+      assert(contains(m, 4))
+      assert(contains(m, 9))
+      assert(!contains(m, 2))
+      assert(!contains(m, 3))
+    }
+  }
+
+  test("map continued") {
+    new TestSets {
+      val s = union(union(s1, s2), s3)
+      val mapped = map(s, (_ * 2))
+
+      assert( contains(mapped, 2), "map 2" )
+      assert( contains(mapped, 4), "map 4" )
+      assert( contains(mapped, 6), "map 6" )
+
+      assert( !contains(mapped, 3), "map 3" )
+    }
+  }
 
 }
