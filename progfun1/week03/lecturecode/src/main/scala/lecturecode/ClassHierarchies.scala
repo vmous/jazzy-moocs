@@ -28,8 +28,8 @@ object ClassHierarchies {
   /**
     * The empty node of the binary tree representation of the set.
     */
-  class Empty extends IntSet {
-    def incl(x: Int): IntSet = new NonEmpty(x, new Empty, new Empty)
+  object Empty extends IntSet {
+    def incl(x: Int): IntSet = new NonEmpty(x, Empty, Empty)
     def contains(x: Int): Boolean = false
     override def toString() = "."
   }
