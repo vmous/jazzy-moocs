@@ -40,10 +40,14 @@ class ClassHierarchiesSuite extends FunSuite {
 
   test("testing intersection") {
     val t5 = new NonEmpty(4, new NonEmpty(2, Empty, Empty), new NonEmpty(9, new NonEmpty(7, Empty, Empty), Empty))
-    val t6 = new NonEmpty(3, Empty, new NonEmpty(4, Empty, Empty))
-    val t7 = new NonEmpty(3, new NonEmpty(1, Empty, Empty), Empty)
-    assert((t5 intersection t6) contains 4)
-    println((t5 intersection t7) isEmpty)
+    val t6 = new NonEmpty(4, new NonEmpty(2, Empty, Empty), new NonEmpty(9, Empty, new NonEmpty(10, Empty, Empty)))
+    val t7 = new NonEmpty(3, Empty, new NonEmpty(4, Empty, Empty))
+    val t8 = new NonEmpty(3, new NonEmpty(1, Empty, Empty), Empty)
+    val t9 = new NonEmpty(3, Empty, new NonEmpty(10, Empty, Empty))
+    assert((t5 intersection t7) contains 4)
+    assert((t6 intersection t7) contains 4)
+    assert((t5 intersection t8) isEmpty)
+    assert((t6 intersection t9) contains 10)
   }
 
 }

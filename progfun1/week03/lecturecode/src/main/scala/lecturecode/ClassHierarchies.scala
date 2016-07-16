@@ -108,7 +108,7 @@ object ClassHierarchies {
     def intersection(that: IntSet): IntSet = {
       val l = left intersection that
       val r = right intersection that
-      val s = l union l
+      val s = l union r
       if (that contains elem) s incl elem else s
     }
 
