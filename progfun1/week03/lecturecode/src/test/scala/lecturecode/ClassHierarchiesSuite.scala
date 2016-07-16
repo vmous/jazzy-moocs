@@ -1,5 +1,7 @@
 package lecturecode
 
+import scala.language.postfixOps
+
 import org.scalatest.FunSuite
 
 import org.junit.runner.RunWith

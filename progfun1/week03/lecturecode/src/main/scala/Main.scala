@@ -1,6 +1,7 @@
 package lecturecode
 
 import ClassHierarchies._
+import ImmutableList._
 
 object Main extends App {
   val t1 = new NonEmpty(3, Empty, Empty)
@@ -20,4 +21,10 @@ object Main extends App {
 
   println(t2)
   println(t2 excl 3)
+
+  val single = singleton(1)
+  println(single)
+
+  val list = new Cons(1, new Cons(4, new Cons(8, new Nil)))
+  println(nth(2, list))
 }
