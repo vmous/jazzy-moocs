@@ -10,11 +10,9 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class ExprSuite extends FunSuite {
 
-  import ExprObj._
-
   test("Evaluating Sum") {
-    assert(eval(new Sum(new Number(3), new Number(7))) === 10)
-    assert(eval(new Sum(new Sum(new Number(2), new Number(1)), new Number(7))) === 10)
+    assert(new Sum(new Number(3), new Number(7)).eval === 10)
+    assert(new Sum(new Sum(new Number(2), new Number(1)), new Number(7)).eval === 10)
   }
 
 }
