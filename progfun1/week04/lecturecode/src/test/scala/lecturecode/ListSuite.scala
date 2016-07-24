@@ -15,4 +15,5 @@ class ListSuite extends FunSuite {
   test("testing list class type variance") {
     val x: List[String] = Nil
   }
+
 }
