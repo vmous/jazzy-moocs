@@ -4,14 +4,15 @@ package lecturecode
   * A trait describing an Expression.
   */
 trait Expr {
-  def eval: Int
+  def eval: Int = this match {
+    case Number(n) => n
+    case Sum(e1, e2) => e1.eval + e2.eval
+  }
 }
 
-class Number(n: Int) extends Expr {
-  def eval: Int = n
+case class Number(n: Int) extends Expr {
 }
 
-class Sum(e1: Expr, e2: Expr) extends Expr {
-  def eval: Int = e1.eval + e2.eval
+case class Sum(e1: Expr, e2: Expr) extends Expr {
 }
 

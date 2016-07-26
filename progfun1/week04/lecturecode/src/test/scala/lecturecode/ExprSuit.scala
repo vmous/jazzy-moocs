@@ -11,8 +11,8 @@ import org.scalatest.junit.JUnitRunner
 class ExprSuite extends FunSuite {
 
   test("Evaluating Sum") {
-    assert(new Sum(new Number(3), new Number(7)).eval === 10)
-    assert(new Sum(new Sum(new Number(2), new Number(1)), new Number(7)).eval === 10)
+    assert(Sum(Number(3), Number(7)).eval === 10)
+    assert(Sum(Sum(Number(2), Number(1)), Number(7)).eval === 10)
   }
 
 }
