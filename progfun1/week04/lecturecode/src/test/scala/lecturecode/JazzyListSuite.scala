@@ -8,12 +8,10 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class ListSuite extends FunSuite {
-
-  import List._
+class JazzyListSuite extends FunSuite {
 
   test("testing list class type variance") {
-    val x: List[String] = Nil
+    val x: JazzyList[String] = Nil
   }
 
 }

@@ -14,18 +14,18 @@ import scala.language.postfixOps
   * class, whereas we would prefer it to be an object (after all, there is only
   * one empty list). To change that we make List covariant.
   */
-trait List[+T] {
+trait JazzyList[+T] {
   def isEmpty: Boolean
   def head: T
-  def tail: List[T]
-  def prepend[U >: T](elem: U): List[U] = new Cons(elem, this)
+  def tail: JazzyList[T]
+  def prepend[U >: T](elem: U): JazzyList[U] = new Cons(elem, this)
 }
 
-class Cons[T](val head: T, val tail: List[T]) extends List[T] {
+class Cons[T](val head: T, val tail: JazzyList[T]) extends JazzyList[T] {
   def isEmpty: Boolean = false
 }
 
-object Nil extends List[Nothing] {
+object Nil extends JazzyList[Nothing] {
   def isEmpty: Boolean = true
   def head: Nothing = throw new NoSuchElementException("Nil.head")
   def tail: Nothing = throw new NoSuchElementException("Nil.tail")
