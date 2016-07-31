@@ -116,13 +116,11 @@ object ListFunctions {
   /**
     * Utility function of merge sort
     */
-  def jazzymerge(xs: List[Int], ys: List[Int]): List[Int] = xs match {
-    case Nil => ys
-    case x :: xs1 => ys match {
-      case Nil => xs
-      case y :: ys1 =>
-        if (x < y) x :: jazzymerge(xs1, ys)
-        else y :: jazzymerge(xs, ys1)
-    }
+  def jazzymerge(xs: List[Int], ys: List[Int]): List[Int] = (xs, ys) match {
+    case (Nil, ys) => ys
+    case (xs, Nil) => xs
+    case (x :: xs1, y :: ys1) =>
+      if (x < y) x :: jazzymerge(xs1, ys)
+      else y :: jazzymerge(xs, ys1)
   }
 }
