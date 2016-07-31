@@ -80,17 +80,14 @@ object ListFunctions {
     *
     * O(n*n)
     */
-  def jazzyinsertsort(xs: List[Int]): List[Int] = xs match {
+  def jazzyinsertsort[T](xs: List[T])(lte: (T, T) => Boolean): List[T] = xs match {
     case List() => List()
-    case y :: ys => jazzyinsert(y, jazzyinsertsort(ys))
-  }
-
-  /**
-    * Utility function for insertion sort.
-    */
-  def jazzyinsert(x: Int, xs: List[Int]): List[Int] = xs match {
-    case List() => List(x)
-    case y :: ys => if (x <= y) x :: xs else y :: jazzyinsert(x, ys)
+    case y :: ys =>
+      def jazzyinsert(x: T, xs: List[T]): List[T] = xs match {
+        case List() => List(x)
+        case y :: ys => if (lte(x, y)) x :: xs else y :: jazzyinsert(x, ys)
+      }
+      jazzyinsert(y, jazzyinsertsort(ys)(lte))
   }
 
   /**
@@ -103,24 +100,20 @@ object ListFunctions {
     *  - sort the two sublists
     *  - merge the two sorted sublists into a single sorted list.
     */
-  def jazzymergesort(xs: List[Int]): List[Int] = {
+  def jazzymergesort[T](xs: List[T])(lt: (T, T) => Boolean): List[T] = {
     val n = xs.length/2
     // n is zero when xs.length is 0 or 1
     if (n == 0) xs
     else {
+      def jazzymerge(xs: List[T], ys: List[T]): List[T] = (xs, ys) match {
+        case (Nil, ys) => ys
+        case (xs, Nil) => xs
+        case (x :: xs1, y :: ys1) =>
+          if (lt(x, y)) x :: jazzymerge(xs1, ys)
+          else y :: jazzymerge(xs, ys1)
+      }
       val (fst, snd) = xs splitAt n
-      jazzymerge(jazzymergesort(fst), jazzymergesort(snd))
+      jazzymerge(jazzymergesort(fst)(lt), jazzymergesort(snd)(lt))
     }
-  }
-
-  /**
-    * Utility function of merge sort
-    */
-  def jazzymerge(xs: List[Int], ys: List[Int]): List[Int] = (xs, ys) match {
-    case (Nil, ys) => ys
-    case (xs, Nil) => xs
-    case (x :: xs1, y :: ys1) =>
-      if (x < y) x :: jazzymerge(xs1, ys)
-      else y :: jazzymerge(xs, ys1)
   }
 }

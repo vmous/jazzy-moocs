@@ -17,7 +17,8 @@ class ListFunctionsSuite extends FunSuite {
   val lst_monad = List(1)
   val lst_normal = List(1, 2 , 3)
   val lst_any = List(List(1, 1), 2, List(3, List(5, 8)))
-  val lst_unsort = List(4, 7, 6, 3, 1)
+  val lst_unsort_int = List(4, 7, 6, 3, 1)
+  val lst_unsort_str = List("pear", "peach", "nectarine", "watermelon", "melon")
 
   test("testing head") {
     intercept[Error]{ head(lst_empty) }
@@ -67,8 +68,11 @@ class ListFunctionsSuite extends FunSuite {
   }
 
   test("testing sorting") {
-    jazzyinsertsort(lst_unsort).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
-    jazzymergesort(lst_unsort).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
+    jazzyinsertsort(lst_unsort_int)((x: Int, y: Int) => x <= y).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
+    jazzymergesort(lst_unsort_int)((x: Int, y: Int) => x < y).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
+    jazzyinsertsort(lst_unsort_str)((x: String, y: String) => x.compareTo(y) < 0).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
+    jazzymergesort(lst_unsort_str)((x: String, y: String) => x.compareTo(y) < 0).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
+
   }
 
 }
