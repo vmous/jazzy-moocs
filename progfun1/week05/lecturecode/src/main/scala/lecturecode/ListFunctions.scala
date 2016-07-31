@@ -159,4 +159,8 @@ object ListFunctions {
     */
   def encode[T](xs: List[T]): List[(T, Int)] =
     pack(xs) map (ys => (ys.head, ys.length))
+
+  def sum(xs: List[Int]): Int = (0 :: xs) reduceLeft ((x, y) => x + y)
+
+  def prod(xs: List[Int]): Int = (1 :: xs) reduceLeft((x, y) => x * y)
 }

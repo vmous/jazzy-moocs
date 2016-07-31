@@ -95,4 +95,9 @@ class ListFunctionsSuite extends FunSuite {
     assert(encode(lst_pack) == List(("a", 3), ("b", 2), ("a", 1)))
   }
 
+  test("testing list reduction") {
+    assert(sum(lst_posneg) === 0)
+    assert(prod(lst_posneg) === -36)
+  }
+
 }
