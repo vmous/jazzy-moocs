@@ -26,4 +26,9 @@ object Collections {
     (xs zip ys).map{ case (x, y) => x * y }.sum
   }
 
+  /**
+    * A number is prime if the only divisors of n are 1 and n itself.
+    */
+  def isPrime(n: Int): Boolean = (2 until n) forall (d => n % d != 0)
+
 }

@@ -19,4 +19,9 @@ class CollectionsSuite extends FunSuite {
     assert(scalarProductPatmat(Vector(2, 4), Vector(6, 8)) === 44)
   }
 
+  test("testing primes") {
+    assert(isPrime(13))
+    assert(!isPrime(32))
+  }
+
 }
