@@ -106,4 +106,12 @@ class ListFunctionsSuite extends FunSuite {
     assert(concat_right(lst_monad, lst_normal) === List(1, 1, 2, 3))
   }
 
+  test("testing mapping of function") {
+    assert(mapFun(lst_normal, ((x: Int) => x + 5)) === List(6, 7, 8))
+  }
+
+  test("testing length") {
+    assert(lengthFun(lst_posneg) === 6)
+  }
+
 }

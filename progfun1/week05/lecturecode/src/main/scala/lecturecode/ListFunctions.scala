@@ -208,4 +208,10 @@ object ListFunctions {
     * Value :: is not a member of parameter type T  
     */
   def concat_right[T](xs: List[T], ys: List[T]): List[T] = (xs foldRight ys)(_ :: _)
+
+  def mapFun[T, U](xs: List[T], f: T => U): List[U] = {
+    (xs foldRight List[U]())(f(_) :: _)
+  }
+
+  def lengthFun[T](xs: List[T]): Int = (xs foldRight 0)((_,acc) => acc + 1)
 }
