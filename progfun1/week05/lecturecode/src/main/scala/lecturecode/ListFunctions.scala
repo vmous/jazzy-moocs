@@ -119,8 +119,19 @@ object ListFunctions {
     }
   }
 
-  def scaleList(xs: List[Double], factor: Double): List[Double] = xs match {
-    case Nil => xs
-    case y :: ys => y * factor :: scaleList(ys, factor)
-  }
+  /**
+    * A simple way of the map implementation could be:
+    * 
+    * abstract class List[T] {...
+    *   def map[U](f: T => U): List[U] = this match {
+    *     case Nil => this
+    *     case x :: xs => f(x) :: xs.map(f)
+    *   }
+    * }
+    *
+    * (in fact, the actual definition of map is a bit more complicated, because
+    * it is tail-recursive, and also because it works for arbitrary collections,
+    * not only lists)
+    */
+  def scaleList(xs: List[Double], factor: Double): List[Double] = xs map(x => x * factor)
 }
