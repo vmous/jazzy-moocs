@@ -21,6 +21,7 @@ class ListFunctionsSuite extends FunSuite {
   val lst_unsort_int = List(4, 7, 6, 3, 1)
   val lst_unsort_str = List("pear", "peach", "nectarine", "watermelon", "melon")
   val lst_doubles = List(1.0, 2.0, 3.0)
+  val lst_posneg = List(-1, 1, -2, 2, -3, 3)
 
   test("testing head") {
     intercept[Error]{ head(lst_empty) }
@@ -79,6 +80,10 @@ class ListFunctionsSuite extends FunSuite {
 
   test("testing scale list") {
     assert(scaleList(lst_doubles, 3) === List(3.0, 6.0, 9.0))
+  }
+
+  test("testing positive elements") {
+    assert(posElems(lst_posneg) === List (1, 2, 3))
   }
 
 }

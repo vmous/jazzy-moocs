@@ -134,4 +134,9 @@ object ListFunctions {
     * not only lists)
     */
   def scaleList(xs: List[Double], factor: Double): List[Double] = xs map(x => x * factor)
+
+  def posElems(xs: List[Int]): List[Int] = xs match {
+    case Nil => xs
+    case y :: ys => if (y > 0) y :: posElems(ys) else posElems(ys)
+  }
 }
