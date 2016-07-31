@@ -135,8 +135,15 @@ object ListFunctions {
     */
   def scaleList(xs: List[Double], factor: Double): List[Double] = xs map(x => x * factor)
 
-  def posElems(xs: List[Int]): List[Int] = xs match {
-    case Nil => xs
-    case y :: ys => if (y > 0) y :: posElems(ys) else posElems(ys)
-  }
+  /**
+    * A simple way of the filter implementation could be:
+    *
+    * abstract class List[T] {...
+    *   def filter(p: T => Boolean): List[T] = this match {
+    *     case Nil => this
+    *     case x :: xs => if (p(x)) x :: xs.filter(p) else xs.filter(p)
+    *   }
+    * }
+    */
+  def posElems(xs: List[Int]): List[Int] = xs filter (x => x > 0)
 }
