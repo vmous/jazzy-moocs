@@ -75,4 +75,54 @@ object ListFunctions {
     }) ::: flatten(ys)
   }
 
+  /**
+    * Insertion sort implementation.
+    *
+    * O(n*n)
+    */
+  def jazzyinsertsort(xs: List[Int]): List[Int] = xs match {
+    case List() => List()
+    case y :: ys => jazzyinsert(y, jazzyinsertsort(ys))
+  }
+
+  /**
+    * Utility function for insertion sort.
+    */
+  def jazzyinsert(x: Int, xs: List[Int]): List[Int] = xs match {
+    case List() => List(x)
+    case y :: ys => if (x <= y) x :: xs else y :: jazzyinsert(x, ys)
+  }
+
+  /**
+    * Merge sort implementation.
+    *
+    * If the list contains zero elements, it is already sorted.
+    * Otherwise:
+    *  - separate the list into two sublists, each containing around half of the
+    *    elements of the original list
+    *  - sort the two sublists
+    *  - merge the two sorted sublists into a single sorted list.
+    */
+  def jazzymergesort(xs: List[Int]): List[Int] = {
+    val n = xs.length/2
+    // n is zero when xs.length is 0 or 1
+    if (n == 0) xs
+    else {
+      val (fst, snd) = xs splitAt n
+      jazzymerge(jazzymergesort(fst), jazzymergesort(snd))
+    }
+  }
+
+  /**
+    * Utility function of merge sort
+    */
+  def jazzymerge(xs: List[Int], ys: List[Int]): List[Int] = xs match {
+    case Nil => ys
+    case x :: xs1 => ys match {
+      case Nil => xs
+      case y :: ys1 =>
+        if (x < y) x :: jazzymerge(xs1, ys)
+        else y :: jazzymerge(xs, ys1)
+    }
+  }
 }

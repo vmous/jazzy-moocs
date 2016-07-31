@@ -6,6 +6,7 @@ import org.scalatest.FunSuite
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import org.scalatest.Matchers._
 
 @RunWith(classOf[JUnitRunner])
 class ListFunctionsSuite extends FunSuite {
@@ -16,6 +17,7 @@ class ListFunctionsSuite extends FunSuite {
   val lst_monad = List(1)
   val lst_normal = List(1, 2 , 3)
   val lst_any = List(List(1, 1), 2, List(3, List(5, 8)))
+  val lst_unsort = List(4, 7, 6, 3, 1)
 
   test("testing head") {
     intercept[Error]{ head(lst_empty) }
@@ -62,6 +64,11 @@ class ListFunctionsSuite extends FunSuite {
 
   test("testing flatten") {
     assert(flatten(lst_any) === List(1, 1, 2, 3, 5, 8))
+  }
+
+  test("testing sorting") {
+    jazzyinsertsort(lst_unsort).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
+    jazzymergesort(lst_unsort).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
   }
 
 }
