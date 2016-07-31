@@ -153,4 +153,10 @@ object ListFunctions {
       val (first, rest) = xs span (z => z == y)
       first :: pack(rest)
   }
+
+  /**
+    * Run length encoding, using pack.
+    */
+  def encode[T](xs: List[T]): List[(T, Int)] =
+    pack(xs) map (ys => (ys.head, ys.length))
 }

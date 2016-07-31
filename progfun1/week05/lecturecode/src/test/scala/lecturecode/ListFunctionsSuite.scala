@@ -91,4 +91,8 @@ class ListFunctionsSuite extends FunSuite {
     assert(pack(lst_pack) === List(List("a", "a", "a"), List("b", "b"), List("a")))
   }
 
+  test("testing encoding") {
+    assert(encode(lst_pack) == List(("a", 3), ("b", 2), ("a", 1)))
+  }
+
 }
