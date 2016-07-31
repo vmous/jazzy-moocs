@@ -146,4 +146,11 @@ object ListFunctions {
     * }
     */
   def posElems(xs: List[Int]): List[Int] = xs filter (x => x > 0)
+
+  def pack[T](xs: List[T]): List[List[T]] = xs match {
+    case Nil => Nil
+    case y :: ys =>
+      val (first, rest) = xs span (z => z == y)
+      first :: pack(rest)
+  }
 }

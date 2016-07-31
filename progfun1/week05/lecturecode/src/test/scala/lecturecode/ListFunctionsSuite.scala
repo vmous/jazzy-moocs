@@ -22,6 +22,7 @@ class ListFunctionsSuite extends FunSuite {
   val lst_unsort_str = List("pear", "peach", "nectarine", "watermelon", "melon")
   val lst_doubles = List(1.0, 2.0, 3.0)
   val lst_posneg = List(-1, 1, -2, 2, -3, 3)
+  val lst_pack = List("a", "a", "a", "b", "b", "a")
 
   test("testing head") {
     intercept[Error]{ head(lst_empty) }
@@ -83,7 +84,11 @@ class ListFunctionsSuite extends FunSuite {
   }
 
   test("testing positive elements") {
-    assert(posElems(lst_posneg) === List (1, 2, 3))
+    assert(posElems(lst_posneg) === List(1, 2, 3))
+  }
+
+  test("testing packing") {
+    assert(pack(lst_pack) === List(List("a", "a", "a"), List("b", "b"), List("a")))
   }
 
 }
