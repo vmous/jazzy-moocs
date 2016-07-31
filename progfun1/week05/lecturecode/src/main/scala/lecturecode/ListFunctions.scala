@@ -160,7 +160,22 @@ object ListFunctions {
   def encode[T](xs: List[T]): List[(T, Int)] =
     pack(xs) map (ys => (ys.head, ys.length))
 
-  def sum(xs: List[Int]): Int = (0 :: xs) reduceLeft (_ + _)
-
-  def prod(xs: List[Int]): Int = (1 :: xs) reduceLeft(_ * _)
+  /**
+    * A simple way of the reduceLeft and foldLeft implementations could be:
+    *
+    * abstract class List[T] {...
+    *   def reduceLeft(op: (T, T) => T): T = this match {
+    *     case Nil => throw new Error("Nil.reduceLeft")
+    *     case x :: xs => (xs foldLeft x)(op)
+    *   }
+    *   def foldLeft[U](z: U)(op: (U, T) => U): U = this match {
+    *     case Nil => z
+    *     case x :: xs => (xs foldLeft op(z, x))(op)
+    *   }
+    * }
+    */
+  def sum_reduced(xs: List[Int]): Int = (0 :: xs) reduceLeft (_ + _)
+  def prod_reduced(xs: List[Int]): Int = (1 :: xs) reduceLeft(_ * _)
+  def sum_folded(xs: List[Int]): Int = (xs foldLeft 0) (_ + _)
+  def prod_folded(xs: List[Int]): Int = (xs foldLeft 1) (_ * _)
 }

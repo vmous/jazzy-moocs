@@ -96,8 +96,10 @@ class ListFunctionsSuite extends FunSuite {
   }
 
   test("testing list reduction") {
-    assert(sum(lst_posneg) === 0)
-    assert(prod(lst_posneg) === -36)
+    assert(sum_reduced(lst_posneg) === 0)
+    assert(prod_reduced(lst_posneg) === -36)
+    assert(sum_folded(lst_posneg) === 0)
+    assert(prod_folded(lst_posneg) === -36)
   }
 
 }
