@@ -68,10 +68,10 @@ class ListFunctionsSuite extends FunSuite {
   }
 
   test("testing sorting") {
-    jazzyinsertsort(lst_unsort_int)((x: Int, y: Int) => x <= y).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
-    jazzymergesort(lst_unsort_int)((x: Int, y: Int) => x < y).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
-    jazzyinsertsort(lst_unsort_str)((x: String, y: String) => x.compareTo(y) < 0).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
-    jazzymergesort(lst_unsort_str)((x: String, y: String) => x.compareTo(y) < 0).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
+    jazzyinsertsort(lst_unsort_int)((x, y) => x <= y).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
+    jazzymergesort(lst_unsort_int)((x, y) => x < y).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
+    jazzyinsertsort(lst_unsort_str)((x, y) => x.compareTo(y) < 0).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
+    jazzymergesort(lst_unsort_str)((x, y) => x.compareTo(y) < 0).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
 
   }
 
