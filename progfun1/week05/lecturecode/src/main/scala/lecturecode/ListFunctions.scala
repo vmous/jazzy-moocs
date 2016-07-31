@@ -122,7 +122,8 @@ object ListFunctions {
   /**
     * A simple way of the map implementation could be:
     * 
-    * abstract class List[T] {...
+    * abstract class List[T] {
+    *   ...
     *   def map[U](f: T => U): List[U] = this match {
     *     case Nil => this
     *     case x :: xs => f(x) :: xs.map(f)
@@ -138,7 +139,8 @@ object ListFunctions {
   /**
     * A simple way of the filter implementation could be:
     *
-    * abstract class List[T] {...
+    * abstract class List[T] {
+    *   ...
     *   def filter(p: T => Boolean): List[T] = this match {
     *     case Nil => this
     *     case x :: xs => if (p(x)) x :: xs.filter(p) else xs.filter(p)
@@ -163,7 +165,8 @@ object ListFunctions {
   /**
     * A simple way of the reduceLeft and foldLeft implementations could be:
     *
-    * abstract class List[T] {...
+    * abstract class List[T] {
+    *   ...
     *   def reduceLeft(op: (T, T) => T): T = this match {
     *     case Nil => throw new Error("Nil.reduceLeft")
     *     case x :: xs => (xs foldLeft x)(op)
@@ -178,4 +181,31 @@ object ListFunctions {
   def prod_reduced(xs: List[Int]): Int = (1 :: xs) reduceLeft(_ * _)
   def sum_folded(xs: List[Int]): Int = (xs foldLeft 0) (_ + _)
   def prod_folded(xs: List[Int]): Int = (xs foldLeft 1) (_ * _)
+
+
+  /**
+    * A simple way of the reduceRight and foldRight implementations could be:
+    *
+    * abstract class List[T] {
+    *   ...
+    *   def reduceRight(op: (T, T) => T): T = this match {
+    *     case Nil => throw new Error("Nil.reduceRight")
+    *     case x :: Nil => x
+    *     case x :: xs => op(x, xs.reduceRight(op))
+    *   }
+    *   def foldRight[U](z: U)(op: (T, U) => U): U = this match {
+    *     case Nil => z
+    *     case x :: xs => op(x, (xs foldRight z)(op))
+    *   }
+    * }
+    *
+    * Note: For operations that are associative and commutative, foldLeft and
+    *       foldRight are equivalent (even though there may be a difference in
+    *       efficiency). For example, replacing foldRigh with foldLeft in the
+    *       implementation of concatenation below, will result in a type error.
+    *
+    * def concat_left[T](xs: List[T], ys: List[T]): List[T] = (xs foldLeft ys)(_ :: _)
+    * Value :: is not a member of parameter type T  
+    */
+  def concat_right[T](xs: List[T], ys: List[T]): List[T] = (xs foldRight ys)(_ :: _)
 }

@@ -102,4 +102,8 @@ class ListFunctionsSuite extends FunSuite {
     assert(prod_folded(lst_posneg) === -36)
   }
 
+  test("testing list concatenation") {
+    assert(concat_right(lst_monad, lst_normal) === List(1, 1, 2, 3))
+  }
+
 }
