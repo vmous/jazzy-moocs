@@ -118,4 +118,9 @@ object ListFunctions {
       jazzymerge(jazzymergesort(fst), jazzymergesort(snd))
     }
   }
+
+  def scaleList(xs: List[Double], factor: Double): List[Double] = xs match {
+    case Nil => xs
+    case y :: ys => y * factor :: scaleList(ys, factor)
+  }
 }

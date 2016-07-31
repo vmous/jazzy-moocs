@@ -20,6 +20,7 @@ class ListFunctionsSuite extends FunSuite {
   val lst_any = List(List(1, 1), 2, List(3, List(5, 8)))
   val lst_unsort_int = List(4, 7, 6, 3, 1)
   val lst_unsort_str = List("pear", "peach", "nectarine", "watermelon", "melon")
+  val lst_doubles = List(1.0, 2.0, 3.0)
 
   test("testing head") {
     intercept[Error]{ head(lst_empty) }
@@ -74,6 +75,10 @@ class ListFunctionsSuite extends FunSuite {
     jazzyinsertsort(lst_unsort_str).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
     jazzymergesort(lst_unsort_str).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
 
+  }
+
+  test("testing scale list") {
+    assert(scaleList(lst_doubles, 3) === List(3.0, 6.0, 9.0))
   }
 
 }
