@@ -1,5 +1,7 @@
 package lecturecode
 
+import scala.math.Ordering
+
 object ListFunctions {
 
   /**
@@ -80,14 +82,14 @@ object ListFunctions {
     *
     * O(n*n)
     */
-  def jazzyinsertsort[T](xs: List[T])(lte: (T, T) => Boolean): List[T] = xs match {
+  def jazzyinsertsort[T](xs: List[T])(ord: Ordering[T]): List[T] = xs match {
     case List() => List()
     case y :: ys =>
       def jazzyinsert(x: T, xs: List[T]): List[T] = xs match {
         case List() => List(x)
-        case y :: ys => if (lte(x, y)) x :: xs else y :: jazzyinsert(x, ys)
+        case y :: ys => if (ord.lteq(x, y)) x :: xs else y :: jazzyinsert(x, ys)
       }
-      jazzyinsert(y, jazzyinsertsort(ys)(lte))
+      jazzyinsert(y, jazzyinsertsort(ys)(ord))
   }
 
   /**
@@ -100,7 +102,7 @@ object ListFunctions {
     *  - sort the two sublists
     *  - merge the two sorted sublists into a single sorted list.
     */
-  def jazzymergesort[T](xs: List[T])(lt: (T, T) => Boolean): List[T] = {
+  def jazzymergesort[T](xs: List[T])(ord: Ordering[T]): List[T] = {
     val n = xs.length/2
     // n is zero when xs.length is 0 or 1
     if (n == 0) xs
@@ -109,11 +111,11 @@ object ListFunctions {
         case (Nil, ys) => ys
         case (xs, Nil) => xs
         case (x :: xs1, y :: ys1) =>
-          if (lt(x, y)) x :: jazzymerge(xs1, ys)
+          if (ord.lt(x, y)) x :: jazzymerge(xs1, ys)
           else y :: jazzymerge(xs, ys1)
       }
       val (fst, snd) = xs splitAt n
-      jazzymerge(jazzymergesort(fst)(lt), jazzymergesort(snd)(lt))
+      jazzymerge(jazzymergesort(fst)(ord), jazzymergesort(snd)(ord))
     }
   }
 }

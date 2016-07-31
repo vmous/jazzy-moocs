@@ -1,6 +1,7 @@
 package lecturecode
 
 import scala.language.postfixOps
+import scala.math.Ordering
 
 import org.scalatest.FunSuite
 
@@ -68,10 +69,10 @@ class ListFunctionsSuite extends FunSuite {
   }
 
   test("testing sorting") {
-    jazzyinsertsort(lst_unsort_int)((x, y) => x <= y).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
-    jazzymergesort(lst_unsort_int)((x, y) => x < y).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
-    jazzyinsertsort(lst_unsort_str)((x, y) => x.compareTo(y) < 0).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
-    jazzymergesort(lst_unsort_str)((x, y) => x.compareTo(y) < 0).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
+    jazzyinsertsort(lst_unsort_int)(Ordering.Int).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
+    jazzymergesort(lst_unsort_int)(Ordering.Int).toSeq should equal (List(1, 3, 4, 6, 7).toSeq)
+    jazzyinsertsort(lst_unsort_str)(Ordering.String).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
+    jazzymergesort(lst_unsort_str)(Ordering.String).toSeq should equal (List("melon", "nectarine", "peach", "pear", "watermelon").toSeq)
 
   }
 
