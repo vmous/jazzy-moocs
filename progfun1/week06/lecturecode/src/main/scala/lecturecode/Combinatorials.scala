@@ -14,13 +14,14 @@ object Combinatorials {
     */
   def findinterestingpairs(n: Int) = {
     if (n < 0) throw new Error("n.negative")
-    // i.  Generate the sequence of all pairs of integers (i, j) such that
-    //     1 <= j < i < n
-    // ii. Filter the pairs for which j + j is prime
+
     def isPrime(n: Int): Boolean = (2 until n) forall (n % _ != 0)
-    (1 until n) flatMap (i =>
-      (1 until i) map (j => (i, j))) filter (pair =>
-      isPrime(pair._1 + pair._2))
+
+    for {
+      i <- (1 until n)
+      j <- (1 until i)
+      if isPrime(i + j)
+    } yield (i, j)
   }
 
 }
