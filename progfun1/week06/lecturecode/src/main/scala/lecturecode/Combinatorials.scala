@@ -24,4 +24,10 @@ object Combinatorials {
     } yield (i, j)
   }
 
+  def scalarProductForExp(xs: Vector[Double], ys: Vector[Double]): Double = {
+    // Implementation from the previous session:
+    // (xs zip ys).map{ case (x, y) => x * y }.sum
+    (for ((x, y) <- xs zip ys) yield x * y).sum
+  }
+
 }
