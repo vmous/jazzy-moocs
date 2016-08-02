@@ -2,14 +2,12 @@ package lecturecode
 
 object Polynomials {
 
-  class Poly(val terms: Map[Int, Double]) {
+  class Poly(terms0: Map[Int, Double]) {
+    val terms = terms0 withDefaultValue 0.0
     def + (other: Poly) = new Poly(terms ++ (other.terms map adjust))
     def adjust(term: (Int, Double)): (Int, Double) = {
       val (exp, coeff) = term
-      terms get exp match {
-        case Some(coeff1) => exp -> (coeff + coeff1)
-        case None => exp -> coeff
-      }
+      exp -> (coeff + terms(exp))
     }
 
     override def toString = {
