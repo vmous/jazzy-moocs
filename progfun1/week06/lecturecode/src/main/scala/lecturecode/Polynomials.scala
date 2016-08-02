@@ -3,6 +3,7 @@ package lecturecode
 object Polynomials {
 
   class Poly(terms0: Map[Int, Double]) {
+    def this(bindings: (Int, Double)*) = this(bindings.toMap)
     val terms = terms0 withDefaultValue 0.0
     def + (other: Poly) = new Poly(terms ++ (other.terms map adjust))
     def adjust(term: (Int, Double)): (Int, Double) = {
