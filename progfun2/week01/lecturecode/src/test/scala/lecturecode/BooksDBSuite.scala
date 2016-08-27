@@ -10,7 +10,7 @@ class BooksDBSuite extends FunSuite {
 
   import BooksDB._
 
-  val books: List[Book] = List(
+  val books: Set[Book] = Set(
     Book(
       title = "Structure and Interpretation of Computer Programs",
       authors = List(
@@ -56,7 +56,7 @@ class BooksDBSuite extends FunSuite {
       if a startsWith "Bird,"
     } yield b.title
 
-    assert(res === List("Introduction to Functional Programming"))
+    assert(res === Set("Introduction to Functional Programming"))
   }
 
   test("finding the book titles that contain the word \"Program\"") {
@@ -65,20 +65,20 @@ class BooksDBSuite extends FunSuite {
       if b.title.indexOf("Program") >= 0
     } yield b.title
 
-    assert(res === List("Structure and Interpretation of Computer Programs", "Introduction to Functional Programming", "Programming in Scala"))
+    assert(res === Set("Structure and Interpretation of Computer Programs", "Introduction to Functional Programming", "Programming in Scala"))
   }
 
   test("finding the names of all authors who have written at least two books") {
-    val res = { for {
+    val res = for {
       b1 <- books
       b2 <- books
-      if b1.title < b2.title
+      if b1 != b2
       a1 <- b1.authors
       a2 <- b2.authors
       if a1 == a2
-    } yield a1 }.distinct
+    } yield a1
 
-    assert((res === List("Bloch, Joshua")))
+    assert((res === Set("Bloch, Joshua")))
   }
 
 }
