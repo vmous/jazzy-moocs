@@ -66,15 +66,13 @@ class BooksDBSuite extends FunSuite {
     val res = for {
       b1 <- books
       b2 <- books
-      if b1 != b2
+      if b1.title < b2.title
       a1 <- b1.authors
       a2 <- b2.authors
       if a1 == a2
     } yield a1
 
-    // Here we get a duplicated author name.
-    // Check next commit for the fix.
-    assert((res !== List("Bloch, Joshua")) && (res === List("Bloch, Joshua", "Bloch, Joshua")))
+    assert((res === List("Bloch, Joshua")))
   }
 
 }
