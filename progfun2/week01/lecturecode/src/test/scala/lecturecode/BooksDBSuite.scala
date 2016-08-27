@@ -30,6 +30,12 @@ class BooksDBSuite extends FunSuite {
       )
     ),
     Book(
+      title = "Effective Java 2",
+      authors = List(
+        "Bloch, Joshua"
+      )
+    ),
+    Book(
       title = "Java Puzzlers",
       authors = List(
         "Bloch, Joshua", "Gafter, Neal"
@@ -63,14 +69,14 @@ class BooksDBSuite extends FunSuite {
   }
 
   test("finding the names of all authors who have written at least two books") {
-    val res = for {
+    val res = { for {
       b1 <- books
       b2 <- books
       if b1.title < b2.title
       a1 <- b1.authors
       a2 <- b2.authors
       if a1 == a2
-    } yield a1
+    } yield a1 }.distinct
 
     assert((res === List("Bloch, Joshua")))
   }
