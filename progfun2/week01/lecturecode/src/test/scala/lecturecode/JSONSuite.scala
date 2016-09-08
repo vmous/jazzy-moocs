@@ -44,7 +44,7 @@ class JSONSuite extends FunSuite {
     assert(data.show === "{\"firstName\":\"John\",\"lastName\":\"Smith\",\"address\":{\"streetAddress\":\"21 2nd Street\",\"state\":\"NY\",\"postalCode\":10021.0},\"phoneNumbers\":[{\"type\":\"home\",\"number\":\"212 555-1234\"},{\"type\":\"fax\",\"number\":\"646 55-4567\"}]}")
   }
 
-  test("Test JSON query") {
+  test("testing JSON query") {
     // { "firstName" : "John",
     //   "lastName" : "Smith",
     //   "address" : {

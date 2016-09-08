@@ -59,6 +59,14 @@ class BooksDBSuite extends FunSuite {
     assert(res === Set("Introduction to Functional Programming"))
   }
 
+  test("finding the book titles whose author's name is \"Bird\" with translated \"for\"-expression") {
+    val res = books.flatMap(i =>
+      (i.authors).withFilter(j => j startsWith "Bird,")
+        .map(j => i.title))
+
+    assert(res === Set("Introduction to Functional Programming"))
+  }
+
   test("finding the book titles that contain the word \"Program\"") {
     val res = for {
       b <- books
