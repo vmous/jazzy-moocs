@@ -88,4 +88,26 @@ object Generators {
     head <- integers
     tail <- lists
   } yield head :: tail
+
+  /**
+    * Randomly generate trees.
+    */
+  trait Tree
+
+  class Leaf(x: Int) extends Tree
+  def leafs: Generator[Leaf] = for {
+    x <- integers
+  } yield new Leaf(x)
+
+  class Inner(l: Tree, r: Tree) extends Tree
+  def inners: Generator[Inner] = for {
+    l <- trees
+    r <- trees
+  } yield new Inner(l, r)
+
+  def trees: Generator[Tree] = for {
+    isLeaf <- booleans
+    tree <- if (isLeaf) leafs else inners
+  } yield tree
+
 }
