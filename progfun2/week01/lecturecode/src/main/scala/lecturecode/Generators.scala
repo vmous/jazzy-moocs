@@ -68,4 +68,24 @@ object Generators {
     for (idx <- choose(0, xs.length)) yield xs(idx)
   }
 
+  /**
+    * Ranldomly generate empty or non-empty lists.
+    */
+  def lists: Generator[List[Int]] = for {
+    isEmpty <- booleans
+    list <- if (isEmpty) emptyLists else nonEmptyLists
+  } yield list
+
+  /**
+    * Empty list.
+    */
+  def emptyLists = single(Nil)
+
+  /**
+    * Non-empty list.
+    */
+  def nonEmptyLists = for {
+    head <- integers
+    tail <- lists
+  } yield head :: tail
 }
