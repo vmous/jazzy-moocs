@@ -16,4 +16,9 @@ class PrimesSuite extends FunSuite {
     assert((m4s take 5).toList === List(0, 4, 8, 12, 16))
   }
 
+  test("testing primes using Sieve of Eratosthenes") {
+    val primes = sieve(from(2))
+    assert((primes take 6).toList === List(2, 3, 5, 7, 11, 13))
+  }
+
 }
