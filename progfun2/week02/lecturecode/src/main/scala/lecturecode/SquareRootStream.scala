@@ -18,4 +18,7 @@ object SquareRootStream {
     guesses
   }
 
+  def isGoodEnough(guess: Double, x: Double) =
+    math.abs((guess * guess - x) / x) < 0.0001
+
 }
