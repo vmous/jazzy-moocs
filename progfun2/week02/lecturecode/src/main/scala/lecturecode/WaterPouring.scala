@@ -104,15 +104,16 @@ object WaterPouring {
       *       found in
       *       https://github.com/vmous/jazzy-moocs/blob/3074cfdc30ef6cfbd6529d7bbfa850486ff2c008/progfun2/week02/lecturecode/src/main/scala/lecturecode/Primes.scala#L5-L8
       */
-    def from(paths: Set[Path]): Stream[Set[Path]] = {
+    def from(paths: Set[Path], explored: Set[State]): Stream[Set[Path]] = {
       if (paths.isEmpty) Stream.empty
       else {
         val more = for {
           path <- paths
           next <- moves map path.extend
+          if !(explored contains(next.endState))
         } yield next
 
-        paths #:: from(more)
+        paths #:: from(more, explored ++ (more map(_.endState)))
       }
     }
 
@@ -122,7 +123,7 @@ object WaterPouring {
       * one, then the paths of length two and so one and so forth, until
       * infinity (!).
       */
-    val pathSets = from(Set(initialPath))
+    val pathSets = from(Set(initialPath), Set(initialState))
 
     /**
       * Go through all the path sets and pick those that are solutions and
