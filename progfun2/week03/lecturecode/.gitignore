@@ -1,0 +1,8 @@
+*~
+.DS_Store
+.ensime
+.ensime_cache/*
+.idea
+project/project/*
+project/target/*
+target/*
