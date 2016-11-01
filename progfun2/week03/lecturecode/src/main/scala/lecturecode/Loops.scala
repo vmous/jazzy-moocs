@@ -26,4 +26,15 @@ object Loops {
     else ()
   }
 
+  /**
+    * Functional implementation of the language cunstruct/keyword "repeat".
+    *
+    * Check notes above.
+    */
+  def REPEAT(command: => Unit)(condition: => Boolean): Unit = {
+    command
+    if (condition) ()
+    else REPEAT(command)(condition)
+  }
+
 }
