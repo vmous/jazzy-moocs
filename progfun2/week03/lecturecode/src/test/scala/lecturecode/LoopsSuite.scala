@@ -45,4 +45,13 @@ class LoopsSuite extends FunSuite {
     assert(x === 3)
   }
 
+  test("Testing for loop") {
+    var x = 0
+    FOR (1 to 3) {
+      x = x + 1
+    }
+
+    assert(x === 3)
+  }
+
 }
