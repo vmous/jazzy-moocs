@@ -37,4 +37,17 @@ object Loops {
     else REPEAT(command)(condition)
   }
 
+  /**
+    * Functional implementation of the language cunstruct/keyword "repeat-until".
+    *
+    * Check notes above.
+    */
+  def REPEAT_(body: => Unit) = new {
+    def UNTIL(condition: => Boolean): Unit = {
+      REPEAT {
+        body
+      } (condition)
+    }
+  }
+
 }

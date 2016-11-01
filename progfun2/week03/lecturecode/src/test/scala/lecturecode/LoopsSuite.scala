@@ -5,6 +5,8 @@ import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
+import scala.language.reflectiveCalls
+
 @RunWith(classOf[JUnitRunner])
 class LoopsSuite extends FunSuite {
 
@@ -18,7 +20,7 @@ class LoopsSuite extends FunSuite {
       i = i - 1
     }
 
-    assert(x == 3)
+    assert(x === 3)
   }
 
   test("Testing repeat loop") {
@@ -29,7 +31,18 @@ class LoopsSuite extends FunSuite {
       i = i - 1
     } (i == 0)
 
-    assert(x == 3)
+    assert(x === 3)
+  }
+
+  test("Testing repeat-until loop") {
+    var i = 3
+    var x = 0
+    REPEAT_ {
+      x = x + 1
+      i = i - 1
+    } UNTIL (i == 0)
+
+    assert(x === 3)
   }
 
 }
