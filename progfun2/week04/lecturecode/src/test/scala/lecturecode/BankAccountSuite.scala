@@ -24,4 +24,21 @@ class BankAccountSuite extends FunSuite {
     assert((acct withdraw 30) === 20)
   }
 
+  test("testing consolidator") {
+    val a, b = new BankAccount
+    val c = new Consolidator(List(a, b))
+
+    assert(c.totalBalance === 0)
+
+    a deposit 50
+    assert(c.totalBalance === 50)
+
+    b deposit 30
+    assert(c.totalBalance === 80)
+
+    a withdraw 20
+    b withdraw 25
+    assert(c.totalBalance === 35)
+  }
+
 }
