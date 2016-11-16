@@ -20,7 +20,7 @@ package lecturecode.frp
   *     caller gets defined or updated by the expression,
   *   </li>
   *   <li>
-  *     if we know that, then executing a <tt>sig()</tt> means adding acalledr
+  *     if we know that, then executing a <tt>sig()</tt> means adding caller
   *     to the observers of <tt>sig</tt>,
   *   </li>
   *   <li>
@@ -33,13 +33,6 @@ package lecturecode.frp
   *     <tt>sig</tt>
   *   </li>
   * </ul>
-  *
-  * When evaluating an expression, we need to know on whose behalf a signal
-  * expression is evaluated (<tt>caller</tt>). A simplistic way to do this is by
-  * maintaining a global data structure, that refers to the current caller and
-  * that we can update as we evaluate signals. To do so, the structure should be
-  * accessed in a stack-like fashion because one evaluation of a signal might
-  * trigger the update or redefinition of other signals.
   */
 class Signal[T](expr: => T) {
 
@@ -97,6 +90,7 @@ class Signal[T](expr: => T) {
     assert(!caller.value.observers.contains(this), "cyclic signal definition")
     myValue
   }
+
 }
 
 /**
@@ -108,12 +102,72 @@ object NoSignal extends Signal[Nothing](???) {
   override def computeValue() = ()
 }
 
-/** The object signal that is used to map signals or create constant signals. */
+/**
+  * The object signal that is used to map signals or create constant signals.
+  *
+  * When evaluating an expression, we need to know on whose behalf a signal
+  * expression is evaluated (who is the <tt>caller</tt>).
+  *
+  * <strong>Attempt #1</strong>
+  *
+  * A simplistic way to do this is by maintaining a global data structure, that
+  * refers to the current caller and that we can update as we evaluate signals.
+  * To do so, the structure should be accessed in a stack-like fashion because
+  * one evaluation of a signal might trigger the update or redefinition of other
+  * signals.
+  *
+  * <strong>Attempt #2</strong>
+  *
+  * Global variables though are not considered best practice. Especially, in a
+  * multi-threaded environment where we want to evaluate several signal
+  * expressions in parallel, we will get race conditions with unpredictable
+  * results.
+  * We can avoid the use of global state still preserving the necessary
+  * protection with synchronization. The later can introduce problems itself like
+  * starvation and deadlocks but we can avoid that by using thread-local state.
+  * This mean that each thread will have access to its own copy of the variable.
+  * Thread-local state is supported in Java through
+  * <tt>java.util.ThreadLocal</tt>. In Scala it is wrapped with class
+  * <tt>scala.util.DynamicVariable</tt>.
+  * <ul>Thread-local state still comes with a number of disadvantages:
+  *   <li>
+  *     its imperative nature often produces hidden dependencies which are
+  *     hard to manage (shared with the global variable),
+  *   </li>
+  *   <li>
+  *     its implementation on the JDK involves a global hash table lookup which
+  *     can be a performance problem, and
+  *   </li>
+  *   <li>
+  *     it does not play well in situations where threads are multiplexed between
+  *     several tasks.
+  *   </li>
+  * </ul>
+  *
+  * <strong>Attempt #3</strong>
+  *
+  * TODO
+  *
+  * A cleaner solution involves implicit parameters: instead of maintaining a
+  * thread-local variable, pass its current value into a signal expression as an
+  * implicit parameter. This is purely functional but it currently requires more
+  * boilerplate than the thread-local solution. Future versions of Scala might
+  * solve this problem.
+  */
 object Signal {
 
-  // The '_' in the type of the stackable variable denotes that it can take a
-  // signal of any type
-  private val caller = new StackableVariable[Signal[_]](NoSignal)
+  import scala.util.DynamicVariable
+
+  /* The '_' in the type of the stackable variable denotes that it can take a
+   signal of any type. */
+  //private val caller = new StackableVariable[Signal[_]](NoSignal)
+
+  /* As mentioned we want to replace the global variable with a thread-local
+   variable <tt>scala.util.DynamicVariable</tt>. Actually we have engineered
+   <tt>StackableVariable</tt>'s API, we used above, to match exactly the API of
+   <tt>DynamicVariable</tt>. So we simply the use of the former with the
+   latter.*/
+  private val caller = new DynamicVariable[Signal[_]](NoSignal)
 
   /**
     * Maps signals or create constant signals.
@@ -124,4 +178,5 @@ object Signal {
     * <tt>Signal(expr)</tt>
     */
   def apply[T](expr: => T) = new Signal(expr)
+
 }
