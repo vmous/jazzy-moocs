@@ -8,6 +8,8 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest._
 
 import TweetLength.MaxTweetLength
+import Polynomial._
+import Calculator._
 
 @RunWith(classOf[JUnitRunner])
 class CalculatorSuite extends FunSuite with ShouldMatchers {
@@ -49,6 +51,69 @@ class CalculatorSuite extends FunSuite with ShouldMatchers {
     assert(resultRed1() == "red")
     val resultRed2 = TweetLength.colorForRemainingCharsCount(Var(-5))
     assert(resultRed2() == "red")
+  }
+
+  /***************************
+   ** 2ND ORDER POLYNOMIALS **
+   ***************************/
+
+  test("test 2nd order polynomial with zero solutions") {
+    val a = Var(1.0)
+    val b = Var(1.0)
+    val c = Var(1.0)
+    val delta = computeDelta(a, b, c)
+    val solutions = computeSolutions(a, b, c, delta)
+    assert(solutions().size === 0)
+    assert(solutions() === Set())
+  }
+
+  test("test 2nd order polynomial with one solution") {
+    val a = Var(3.0)
+    val b = Var(6.0)
+    val c = Var(3.0)
+    val delta = computeDelta(a, b, c)
+    val solutions = computeSolutions(a, b, c, delta)
+    assert(solutions().size === 1)
+    assert(solutions() === Set(-9.0))
+  }
+
+  test("test 2nd order polynomial with two solutions") {
+    val a = Var(5.0)
+    val b = Var(6.0)
+    val c = Var(1.0)
+    val delta = computeDelta(a, b, c)
+    val solutions = computeSolutions(a, b, c, delta)
+    assert(solutions().size === 2)
+    assert(solutions() === Set(-0.2, -1.0))
+  }
+
+  test("test 2nd order polynomial as signals") {
+    val a = Var(1.0)
+    val b = Var(1.0)
+    val c = Var(1.0)
+    val delta = computeDelta(a, b, c)
+    val solutions = computeSolutions(a, b, c, delta)
+    assert(solutions().size === 0)
+    assert(solutions() === Set())
+
+    a.update(3.0)
+    b.update(6.0)
+    c.update(3.0)
+    assert(solutions().size === 1)
+    assert(solutions() === Set(-9.0))
+
+    a.update(5.0)
+    c.update(1.0)
+    assert(solutions().size === 2)
+    assert(solutions() === Set(-0.2, -1.0))
+  }
+
+  /****************
+   ** CALCULATOR **
+   ****************/
+
+  test("test calculator") {
+    assert(true)
   }
 
 }
