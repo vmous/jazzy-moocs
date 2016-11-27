@@ -8,4 +8,11 @@ object Threader {
     }
   }
 
+  class HelloThreadWithHiccups extends Thread {
+    override def run() {
+      print("Hello ")
+      println("world!")
+    }
+  }
+
 }
