@@ -9,4 +9,10 @@ object UniqueID {
     uidCount
   }
 
+  private val m = new AnyRef {}
+  def getUniqueIdWithMonitor(): Long = m.synchronized {
+    uidCount += 1
+    uidCount
+  }
+
 }
