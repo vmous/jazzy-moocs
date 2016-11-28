@@ -16,7 +16,7 @@ class UniqueIDSuite extends FunSuite {
 
   def runThreads(f: () => Long): Seq[Seq[Long]] = {
     val tasks: Seq[Future[Seq[Long]]] =
-      for (i <- 1 to 100) yield future {
+      for (i <- 1 to 1000) yield future {
         (for (i <- 0 to 10) yield f())
       }
 
@@ -29,7 +29,7 @@ class UniqueIDSuite extends FunSuite {
     sequence
   }
 
-  def hasDuplicates(sequence: Seq[Seq[Long]]): Boolean = {
+  def noDuplicates(sequence: Seq[Seq[Long]]): Boolean = {
 
     val flattened: Seq[Long] = sequence.flatten
 
@@ -37,11 +37,11 @@ class UniqueIDSuite extends FunSuite {
   }
 
   test("testing unsynchronized id generation") {
-    assert(!hasDuplicates(runThreads(getUniqueId)))
+    assert(!noDuplicates(runThreads(getUniqueId)))
   }
 
   test("testing monitored id generation") {
-    assert(hasDuplicates(runThreads(getUniqueIdWithMonitor)))
+    assert(noDuplicates(runThreads(getUniqueIdWithMonitor)))
   }
 
 }
