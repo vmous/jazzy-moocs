@@ -11,9 +11,6 @@ class ParallelAccountSuite extends FunSuite {
 
   import ParallelAccount._
 
-  val a1 = new Account(500000)
-  val a2 = new Account(700000)
-
   def startThread(a: Account, b: Account, n: Int) = {
     val t = new Thread {
       override def run() {
@@ -24,11 +21,16 @@ class ParallelAccountSuite extends FunSuite {
     t
   }
 
-  test("testing deadlock") {
+  test("testing account transaction") {
+    val a1 = new Account(500000)
+    val a2 = new Account(700000)
     val t1 = startThread(a1, a2, 150000)
     val t2 = startThread(a2, a1, 150000)
     t1.join()
     t2.join()
+
+    assert(a1.getAmount() === 500000)
+    assert(a2.getAmount() === 700000)
   }
 
 }
