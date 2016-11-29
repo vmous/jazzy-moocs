@@ -14,8 +14,12 @@ class PNormSuite extends FunSuite {
     assert(PNorm.pNorm(Array(1, 1), 2.0) === scala.math.sqrt(2.0))
   }
 
-  test("testing pnorm with two part") {
+  test("testing pnorm with two parts") {
     assert(PNorm.pNormTwoParts(Array(1, 1), 2.0) === scala.math.sqrt(2.0))
+  }
+
+  test("testing pnorm with two parallel parts") {
+    assert(PNorm.pNormTwoParallelParts(Array(1, 1), 2.0) === scala.math.sqrt(2.0))
   }
 
 }
