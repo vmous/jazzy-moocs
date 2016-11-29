@@ -3,6 +3,7 @@ package lecturecode
 object Main extends App {
 
   import Threader._
+  import Pi._
 
   val t = new HelloThread
 
@@ -21,4 +22,6 @@ object Main extends App {
     t1.join()
     t2.join()
   }
+
+  println("Estimating π: " + monteCarloPiSeq(64000))
 }
