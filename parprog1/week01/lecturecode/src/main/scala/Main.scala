@@ -23,5 +23,6 @@ object Main extends App {
     t2.join()
   }
 
-  println("Estimating π: " + monteCarloPiSeq(64000))
+  println("Estimating π (sequentially): " + monteCarloPiSeq(64000))
+  println("Estimating π (parallely): " + monteCarloPiPar(64000))
 }
