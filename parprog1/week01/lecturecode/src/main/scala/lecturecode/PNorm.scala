@@ -62,4 +62,19 @@ object PNorm {
     math.pow((sum1 + sum2), 1 / p)
   }
 
+  def sumSegmentRec(a: Array[Int], p: Double, s: Int, t: Int): Double = {
+    val threshold = 2
+
+    if (t - s < threshold) sumSegment(a, p, s, t)
+    else {
+      val m = s + (t - s) / 2
+      val (sum1, sum2) = parallel(sumSegmentRec(a, p, s, m), sumSegmentRec(a, p, m, t))
+      sum1 + sum2
+    }
+  }
+
+  def pNormRecursive(a: Array[Int], p: Double): Double = {
+    math.pow(sumSegmentRec(a, p, 0, a.length), 1 / p)
+  }
+
 }

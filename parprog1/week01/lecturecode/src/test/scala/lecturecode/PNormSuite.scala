@@ -22,4 +22,8 @@ class PNormSuite extends FunSuite {
     assert(PNorm.pNormTwoParallelParts(Array(1, 1), 2.0) === scala.math.sqrt(2.0))
   }
 
+  test("testing pnorm with as many parallel parts as needed") {
+    assert(PNorm.pNormRecursive(Array(1, 1, 1, 1, 1), 2.0) === 2.23606797749979)
+  }
+
 }
