@@ -13,4 +13,10 @@ object PNorm {
     math.pow(sumSegment(a, p, 0, a.length), 1 / p)
   }
 
+  def pNormTwoParts(a: Array[Int], p: Double): Double = {
+    val m = a.length / 2
+    val (sum1, sum2) = (sumSegment(a, p, 0, m), sumSegment(a, p, m, a.length))
+    math.pow((sum1 + sum2), 1 / p)
+  }
+
 }
