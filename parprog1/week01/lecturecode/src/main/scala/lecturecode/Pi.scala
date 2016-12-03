@@ -3,7 +3,7 @@ package lecturecode
 import scala._
 import scala.util.Random
 
-import ParallelCombinator.parallel
+import ParallelCombinator.{ parallel, task }
 
 object Pi {
 
@@ -26,6 +26,14 @@ object Pi {
       parallel(mcCount(iter / 4), mcCount(iter / 4)),
       parallel(mcCount(iter / 4), mcCount(iter - 3 * (iter / 4))))
     4.0 * (pi1 + pi2 + pi3 + pi4) / iter
+  }
+
+  def monteCarloPiParTasks(iter: Int): Double = {
+    val pi1 = task { mcCount(iter / 4) }
+    val pi2 = task { mcCount(iter / 4) }
+    val pi3 = task { mcCount(iter / 4) }
+    val pi4 = task { mcCount(iter - 3 * (iter / 4)) }
+    4.0 * (pi1.join() + pi2.join() + pi3.join() + pi4.join()) / iter
   }
 
 }
