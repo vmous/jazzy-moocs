@@ -25,5 +25,5 @@ object Main extends App {
 
   println("Estimating π (sequentially): " + monteCarloPiSeq(64000))
   println("Estimating π (parallely): " + monteCarloPiPar(64000))
-  println("Estimating π (parallely with taskss): " + monteCarloPiParTasks(64000))
+  println("Estimating π (parallely with tasks): " + monteCarloPiParTasks(64000))
 }
