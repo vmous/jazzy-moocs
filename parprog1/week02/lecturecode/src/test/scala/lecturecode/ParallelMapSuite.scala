@@ -10,7 +10,7 @@ class ParallelMapSuite extends FunSuite {
 
   import ParallelMap._
 
-  test("testing mapping a segment sequentially") {
+  test("testing mapping a segment sequentially using array") {
     val in = Array(2, 3, 4, 5, 6)
     val out = Array(0, 0, 0, 0, 0)
     val f = (x: Int) => x * x
@@ -19,7 +19,7 @@ class ParallelMapSuite extends FunSuite {
     assert(out === Array(0, 9, 16, 0, 0))
   }
 
-  test("testing mapping a segment parallely") {
+  test("testing mapping a segment parallely using array") {
     val in = Array(2, 3, 4, 5, 6)
     val out = Array(0, 0, 0, 0, 0)
     val f = (x: Int) => x * x
