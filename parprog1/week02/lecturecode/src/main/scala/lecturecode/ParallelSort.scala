@@ -26,6 +26,7 @@ object ParallelSort {
     *   sequentially merge the two array halves by copying into temporary array,
     * </li>
     * <li>copy the temporary array back into the original array</li>
+    * </ul>
     */
   def parMergeSort(xs: Array[Int], maxDepth: Int): Unit = {
 
