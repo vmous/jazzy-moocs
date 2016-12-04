@@ -39,8 +39,37 @@ package object scalashop {
 
   /** Computes the blurred RGBA value of a single pixel of the input image. */
   def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA = {
-    // TODO implement using while loops
-    ???
+    /* We compute the average value by separating the pixel into four channels,
+     computing the average of each of the channels, and using the four average
+     values to produce the final pixel value. In the previous figure, the radius
+     parameter is equal to 1 and the average is computed from 9 pixels.
+
+     Implement the boxBlurKernel method. Use two nested while-loops. Make sure
+     that the pixels at the image edges are affected only by the pixels inside
+     the image (hint: use the clamp method from the package object). */
+
+    def clampX(v: Int): Int = clamp(v, 0, src.width - 1)
+    def clampY(v: Int): Int = clamp(v, 0, src.height - 1)
+
+    if (radius == 0)
+      src(x, y)
+    else {
+      var xi = clampX(x - radius)
+      var r, g, b, a, pixels = 0
+
+      for {
+        xi <- clampX(x - radius) to clampX(x + radius)
+        yi <- clampY(y - radius) to clampY(y + radius)
+      } yield {
+        val pixel = src(xi, yi)
+        r += red(pixel)
+        g += green(pixel)
+        b += blue(pixel)
+        a += alpha(pixel)
+        pixels += 1
+      }
+      rgba(r / pixels, g / pixels, b / pixels, a / pixels)
+    }
   }
 
 }
