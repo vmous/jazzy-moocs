@@ -6,9 +6,9 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class ParallelMapSuite extends FunSuite {
+class MapArraySuite extends FunSuite {
 
-  import ParallelMap._
+  import MapArray._
 
   test("testing mapping a segment sequentially using array") {
     val in = Array(2, 3, 4, 5, 6)
