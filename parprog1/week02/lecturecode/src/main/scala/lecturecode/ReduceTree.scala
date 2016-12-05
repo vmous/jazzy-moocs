@@ -14,6 +14,11 @@ object ReduceTree {
     override val size = l.size + r.size
   }
 
+  def toList[A](t: Tree[A]): List[A] = t match {
+    case Leaf(v) => List(v)
+    case Node(l, r) => toList[A](l) ++ toList[A](r)
+  }
+
   def reduceTreeSeq[A](t: Tree[A], f: (A, A) => A): A = t match {
     case Leaf(v) => v
     case Node(l, r) => f(reduceTreeSeq[A](l, f), reduceTreeSeq[A](r, f))
