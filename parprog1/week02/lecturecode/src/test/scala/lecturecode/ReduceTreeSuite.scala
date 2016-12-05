@@ -24,4 +24,10 @@ class ReduceTreeSuite extends FunSuite {
     assert(toList(tree) === List(1, 3, 8))
   }
 
+  test("testing equality of toList and its MapReduce expression") {
+    def lst = (x: Int) => List(x)
+    def conc = (x: List[Int], y: List[Int]) => x ++ y
+    assert(toList(tree) === reduceTreePar[List[Int]](mapTreePar(tree, lst), conc))
+  }
+
 }

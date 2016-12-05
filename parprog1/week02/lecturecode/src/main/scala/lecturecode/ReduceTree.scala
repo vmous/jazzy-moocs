@@ -19,6 +19,19 @@ object ReduceTree {
     case Node(l, r) => toList[A](l) ++ toList[A](r)
   }
 
+  def mapTreeSeq[A, B](t: Tree[A], f: A => B): Tree[B] = t match {
+    case Leaf(v) => Leaf(f(v))
+    case Node(l, r) => Node(mapTreeSeq[A, B](l, f), mapTreeSeq[A, B](r, f))
+  }
+
+  def mapTreePar[A, B](t: Tree[A], f: A => B): Tree[B] = t match {
+    case Leaf(v) => Leaf(f(v))
+    case Node(l, r) => {
+      val (lb, rb) = parallel(mapTreePar[A, B](l, f), mapTreePar[A, B](r, f))
+      Node(lb, rb)
+    }
+  }
+
   def reduceTreeSeq[A](t: Tree[A], f: (A, A) => A): A = t match {
     case Leaf(v) => v
     case Node(l, r) => f(reduceTreeSeq[A](l, f), reduceTreeSeq[A](r, f))
