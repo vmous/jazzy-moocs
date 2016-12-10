@@ -6,60 +6,60 @@ import org.scalameter._
 object ScanArray {
 
   sealed abstract class TreeFold[A] { val res: A }
-  case class Leaf[A](from: Int, to: Int, override val res: A) extends TreeFold[A]
+  case class Leaf[A](from: Int, until: Int, override val res: A) extends TreeFold[A]
   case class Node[A](l: TreeFold[A], override val res: A,
     r: TreeFold[A]) extends TreeFold[A]
 
   /**
-    * fold left array segment from from to to-1, sequentially. Used in the
+    * fold left array segment from from to until-1, sequentially. Used in the
     * base case for upsweep. This is the same operation we would use in the
     * base case of parallel fold.
     */
-  def foldSegSeq[A,B](inp: Array[A], from: Int, to: Int, b0: B, f: (B,A) => B): B = {
+  def foldSegSeq[A,B](inp: Array[A], from: Int, until: Int, b0: B, f: (B,A) => B): B = {
     var b = b0
     var i = from
-    while (i < to) {
+    while (i < until) {
       b = f(b, inp(i))
       i = i + 1
     }
     b
   }
 
-  def upsweep[A](inp: Array[A], from: Int, to: Int, a0: A, f: (A, A) => A): TreeFold[A] = {
+  def upsweep[A](inp: Array[A], from: Int, until: Int, a0: A, f: (A, A) => A): TreeFold[A] = {
     // requires f to be associative
-    if (to - from < threshold)
+    if (until - from < threshold)
       /* Even though this implementation of foldSegSeq gets a0 the initial
        element, the way we invoked it here is with input element of the array
        at the initial element of the segment and then reducing starting from
        the subsequent element.
        */
-      Leaf(from, to, foldSegSeq(inp, from + 1, to, inp(from), f))
+      Leaf(from, until, foldSegSeq(inp, from + 1, until, inp(from), f))
     else {
-      val mid = from + (to - from) / 2
+      val mid = from + (until - from) / 2
       val (tl, tr)  = parallel(
         upsweep(inp, from, mid, a0, f),
-        upsweep(inp, mid, to, a0, f))
+        upsweep(inp, mid, until, a0, f))
       Node(tl, f(tl.res, tr.res), tr)
     }
   }
 
   /**
-    * Scan array segment inp(from) to inp(to-1), storing results into
-    * out(from+1) to out(to).
+    * Scan array segment inp(from) to inp(until-1), storing results into
+    * out(from+1) to out(until).
     *
     * At the end, out(i+1) stores fold of elements:
-    *     [a0, in(from),... in(i)] for i from from to to-1
+    *     [a0, in(from),... in(i)] for i from from to until-1
     *
-    * In particular, out(from+1) stores f(a0,inp(from)) and out(to) stores
-    * fold of [a0, in[(from),... inp(to-1)]. The value a0 is not directly
+    * In particular, out(from+1) stores f(a0,inp(from)) and out(until) stores
+    * fold of [a0, in[(from),... inp(until-1)]. The value a0 is not directly
     * stored into out anywhere. This is used below cut-off in downsweep for
     * scanLeftPar, and also to implement scanLeftSeq as a comparison point.
    */
-  def scanLeftSegSeq[A](inp: Array[A], from: Int, to: Int, a0: A, f: (A, A) => A, out: Array[A]) = {
-    if (from < to) {
+  def scanLeftSegSeq[A](inp: Array[A], from: Int, until: Int, a0: A, f: (A, A) => A, out: Array[A]) = {
+    if (from < until) {
       var i = from
       var a = a0
-      while (i < to) {
+      while (i < until) {
         a = f(a,inp(i))
 	out(i + 1) = a
         i = i + 1
@@ -75,8 +75,8 @@ object ScanArray {
 
   def downsweep[A](inp: Array[A], a0: A, f: (A, A) => A, t: TreeFold[A], out: Array[A]): Unit = {
     t match {
-      case Leaf(from, to, res) => 
-        scanLeftSegSeq(inp, from, to, a0, f, out)
+      case Leaf(from, until, res) => 
+        scanLeftSegSeq(inp, from, until, a0, f, out)
       case Node(l, res, r) => {
         /* As we're processing the tree of results, the initial element for the
          left of tree is our own initial element a0, whereas the initial
@@ -90,8 +90,8 @@ object ScanArray {
     }
   }
 
-  def scanLeftSegPar[A](inp: Array[A], from: Int, to: Int, a0: A, f: (A, A) => A, out: Array[A]) = {
-    val t = upsweep(inp, from, to, a0, f)
+  def scanLeftSegPar[A](inp: Array[A], from: Int, until: Int, a0: A, f: (A, A) => A, out: Array[A]) = {
+    val t = upsweep(inp, from, until, a0, f)
     downsweep(inp, a0, f, t, out)
   }
 
@@ -120,9 +120,9 @@ object ScanArray {
       x ::: y
 
     def arrEq[A](a1: Array[A], a2: Array[A]): Boolean = {
-      def eqSeq(from: Int, to: Int): Boolean = {
+      def eqSeq(from: Int, until: Int): Boolean = {
 	var i= from
-	while (i < to) {
+	while (i < until) {
 	  if (a1(i) != a2(i)) {
 	    println(s"Array difference: a1(${i})=${a1(i)}, a2(${i})=${a2(i)}")
 	    return false
