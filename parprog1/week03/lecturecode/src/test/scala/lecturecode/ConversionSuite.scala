@@ -6,9 +6,9 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class DataParallelOpsSuite extends FunSuite {
+class ConversionSuite extends FunSuite {
 
-  import DataParallelOps._
+  import Conversion._
 
   val array = (0 until 1000000).toArray
 
