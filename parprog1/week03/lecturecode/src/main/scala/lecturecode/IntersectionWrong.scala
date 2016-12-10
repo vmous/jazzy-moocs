@@ -5,7 +5,7 @@ import org.scalameter._
 
 object IntersectionWrong {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     def intersection(a: GenSet[Int], b: GenSet[Int]): Set[Int] = {
       val result = mutable.Set[Int]()
       /* The problem with this implementation is that "result", which is a

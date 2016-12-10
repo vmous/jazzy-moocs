@@ -11,7 +11,7 @@ object LargestPalindromeProduct {
     Key.verbose -> true
   ) withWarmer(new Warmer.Default)
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val value = 100
     val seqtime = standardConfig measure {
       (100 to 999).flatMap(i => (i to 999).map(i * _))
