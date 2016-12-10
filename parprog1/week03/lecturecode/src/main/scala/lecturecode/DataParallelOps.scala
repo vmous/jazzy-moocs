@@ -20,9 +20,4 @@ object DataParallelOps {
     xs.par.fold(Int.MinValue)(math.max) // (x, y) => if (x > y) x else y
   }
 
-  def largestPalidrome(xs: GenSeq[Int]): Int = {
-    xs.aggregate(Int.MinValue)((largest, n) =>
-      if (n > largest && n.toString == n.toString.reverse) n else largest, math.max)
-  }
-
 }

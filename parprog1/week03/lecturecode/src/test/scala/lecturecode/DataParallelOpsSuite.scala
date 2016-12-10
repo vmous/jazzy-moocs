@@ -10,9 +10,14 @@ class DataParallelOpsSuite extends FunSuite {
 
   import DataParallelOps._
 
-  test("testing largest palindrome") {
-    val array = (0 until 1000000).toArray
-    assert(largestPalidrome(array) === 999999)
+  val array = (0 until 1000000).toArray
+
+  test("testing sum") {
+    assert(sum(array) === 1783293664)
+  }
+
+  test("testing max") {
+    assert(max(array) === 999999)
   }
 
 }
