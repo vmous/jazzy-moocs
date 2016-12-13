@@ -17,7 +17,7 @@ object ParallelGraphContraction {
    itself. The only exception are the nodes at the very end, who have to do the
    division, modulo graph.size.
    If the program is correct, the printed violation should be none. */
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val graph = mutable.Map[Int, Int]() ++= (0 until 100000).map(i => (i, i + 1))
     /* We have two problems:
      - #1: we are modifying the same collection that we are traversing

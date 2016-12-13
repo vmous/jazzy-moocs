@@ -21,7 +21,7 @@ object ParallelGraphContractionWithTrieMap {
    to find the successor's successor.
    Note that snapshots are never modified. The only collection that does get
    modified is graph. */
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val graph = concurrent.TrieMap[Int, Int]() ++= (0 until 100000).map(i => (i, i + 1))
     graph(graph.size - 1) = 0
     val previous = graph.snapshot()

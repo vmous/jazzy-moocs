@@ -5,7 +5,7 @@ import org.scalameter._
 
 object Intersection {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     def intersection(a: GenSet[Int], b: GenSet[Int]): GenSet[Int] = {
       /* We filter the elements from a which are also contained in b.
        Since sets in Scala also have the type A => Boolean as the "contains"

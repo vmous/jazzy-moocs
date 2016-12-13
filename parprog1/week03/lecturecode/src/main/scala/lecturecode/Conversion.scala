@@ -30,7 +30,7 @@ object Conversion {
   val array = Array.fill(10000000)("")
   val list = array.toList
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val listtime = standardConfig measure {
       list.par
     }
