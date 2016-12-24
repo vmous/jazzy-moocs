@@ -9,6 +9,89 @@ import scala.collection.par._
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
+/**
+  * We assume that the force between particles is the gravitational force from
+  * classical mechanics. The formula for the gravitational force between two
+  * stellar bodies is:
+  *
+  *   F = G * (m1 * m2) / distance^2
+  *
+  * where        F: the absolute value of the gravitational force
+  *              G: The gravitational constant
+  *             mX: The mass of stellar body X
+  *       distance: the distance between the two stellar bodies
+  *
+  * For each particle, the net force is computed by summing the components of
+  * the individual forces from all other particles.
+  *
+  * The direct sum N-body algorithm is very simple, but also inefficient because
+  * we need to update N particles, and compute N - 1 force contributions for each
+  * of those particles resulting to an overall complexity of O(N^2) for each
+  * each iteration.
+  *
+  * The Barnes-Hut algorithm is an optimization of the direct sum N-body
+  * algorithm, and is based on the following observation:
+  *
+  * If a cluster of bodies is sufficiently distant from a body A, the net force
+  * on A from that cluster can be approximated with one big body with the mass
+  * of all the bodies in the cluster, positioned at the center of mass of the
+  * cluster.
+  *
+  * The Barnes-Hut algorithm relies on a quadtree -- a data structure that
+  * divides the space into cells, and answers queries such as 'What is the total
+  * mass and the center of mass of all the particles in this cell?'
+  *
+  *                ---
+  *               | / |
+  *                ---
+  *                 |
+  *    ---------------------------
+  * nw |     ne |        | sw     | se
+  *    |        |        |        |
+  *   ---      ---      ---      ---
+  *  | A |    | F |    | - |    | / | mass = m_D + m_E + m_B + m_C
+  *   ---      ---      ---      ---
+  *                               |
+  *                 ----------------------------
+  *              nw |     ne |        | sw     | se
+  *                 |        |        |        |
+  *                ---      ---      ---      ---
+  *               | D |    | E |    | B |    | C |
+  *                ---      ---      ---      ---
+  *
+  * Above, the total force from the bodies B, C, D and E on the body A can be
+  * approximated by a single body with mass equal to the sum of masses B, C,
+  * D and E, positioned at the center of mass of bodies B, C, D and E. The center
+  * of mass (massX, massY) is computed as follows:
+  *
+  *   mass = m_B + m_C + m_D + m_E
+  *   massX = (m_B * x_B + m_C * x_C + m_D * x_D + m_E * x_E) / mass
+  *   massY = (m_B * y_B + m_C * y_C + m_D * y_D + m_E * y_E) / mass
+  *
+  * <ol> An iteration of the Barnes-Hut algorithm is composed of the following
+  * steps:
+  * <li>Construct the quadtree for the current arrangement of the bodies.</li>
+  * <li>Determine the boundaries, i.e. the square into which all bodies fit.</li>
+  * <li>
+  *   Construct a quadtree that covers the boundaries and contains all the
+  *   bodies.
+  * </li>
+  * <li>Update the bodies -- for each body:
+  *   <ol>
+  *     <li>Update the body position according to its current velocity.</li>
+  *     <li>
+  *       Using the quadtree, compute the net force on the body by adding the
+  *       individual forces from all the other bodies.
+  *     </li>
+  *     <li>Update the velocity according to the net force on that body.</li>
+  *   </ol>
+  * </li>
+  * </ol>
+  *
+  * It turns out that, for most spatial distribution of bodies, the expected
+  * number of cells that contribute to the net force on a body is log n, so the
+  * overall complexity of the Barnes-Hut algorithm is O(n log n).
+  */
 object BarnesHut {
 
   val model = new SimulationModel

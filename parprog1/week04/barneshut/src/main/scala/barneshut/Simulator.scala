@@ -11,14 +11,46 @@ import common._
 
 class Simulator(val taskSupport: TaskSupport, val timeStats: TimeStatistics) {
 
+  /**
+    * Given an existing boundaries object and a body, the updateBoundaries
+    * updates the minX, minY, maxX and maxY values so that the boundaries include
+    * the body.
+    */
   def updateBoundaries(boundaries: Boundaries, body: Body): Boundaries = {
-    ???
+    boundaries.minX = boundaries.minX min body.x
+    boundaries.minY = boundaries.minY min body.y
+    boundaries.maxX = boundaries.maxX max body.x
+    boundaries.maxY = boundaries.maxY max body.y
+    boundaries
   }
 
+  /**
+    * Given two Boundaries objects, creates a new one, which represents the
+    * smallest rectangle that contains both the input boundaries.
+    */
   def mergeBoundaries(a: Boundaries, b: Boundaries): Boundaries = {
-    ???
+    val result = new Boundaries
+    result.minX = a.minX min b.minX
+    result.minY = a.minY min b.minY
+    result.maxX = a.maxX max b.maxX
+    result.maxY = a.maxY max b.maxY
+    result
   }
 
+  /**
+    * Computes the Scene Boundaries.
+    *
+    * Since bodies move and the boundaries dynamically change, we must compute
+    * them in every iteration of the algorithm. The implementation uses the
+    * aggregate combinator on the sequence of bodies to compute the boundaries.
+    *
+    * Concretely, the aggregate method divides the input sequence into a number
+    * of chunks. For each of the chunks, it uses the new Boundaries expression to
+    * create the accumulation value, and then folds the values in that chunk
+    * calling updateBoundaries on each body, in the same way a foldLeft operation
+    * would. Finally, aggregate combines the results of different chunks using a
+    * reduction tree and mergeBoundaries.
+    */
   def computeBoundaries(bodies: Seq[Body]): Boundaries = timeStats.timed("boundaries") {
     val parBodies = bodies.par
     parBodies.tasksupport = taskSupport
@@ -28,7 +60,7 @@ class Simulator(val taskSupport: TaskSupport, val timeStats: TimeStatistics) {
   def computeSectorMatrix(bodies: Seq[Body], boundaries: Boundaries): SectorMatrix = timeStats.timed("matrix") {
     val parBodies = bodies.par
     parBodies.tasksupport = taskSupport
-    ???
+    parBodies.aggregate(new SectorMatrix(boundaries, SECTOR_PRECISION))(_ += _, _.combine(_))
   }
 
   def computeQuad(sectorMatrix: SectorMatrix): Quad = timeStats.timed("quad") {
@@ -38,7 +70,7 @@ class Simulator(val taskSupport: TaskSupport, val timeStats: TimeStatistics) {
   def updateBodies(bodies: Seq[Body], quad: Quad): Seq[Body] = timeStats.timed("update") {
     val parBodies = bodies.par
     parBodies.tasksupport = taskSupport
-    ???
+    parBodies.map(_.updated(quad)).seq
   }
 
   def eliminateOutliers(bodies: Seq[Body], sectorMatrix: SectorMatrix, quad: Quad): Seq[Body] = timeStats.timed("eliminate") {
