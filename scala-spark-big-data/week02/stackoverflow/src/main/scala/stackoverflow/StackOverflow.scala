@@ -7,24 +7,43 @@ import org.apache.spark.rdd.RDD
 import annotation.tailrec
 import scala.reflect.ClassTag
 
-/** A raw stackoverflow posting, either a question or an answer */
+/**
+  * A raw stackoverflow posting, either a question or an answer
+  *
+  * @param postingType    Type of the post. Type 1 = question, type 2 = answer.
+  * @param id             Unique id of the post (regardless of type).
+  * @param acceptedAnswer Id of the accepted answer post. This information is
+  *                       optional, so maybe be missing indicated by an empty
+  *                       string.
+  * @param parentId       For an answer: id of the corresponding question. For
+  *                       a question:missing, indicated by an empty string.
+  * @param score          The StackOverflow score (based on user votes).
+  * @param tag            The tag indicates the programming language that the
+  *                       post is about, in case it's a question, or missing in
+  *                       case it's an answer.
+  */
 case class Posting(postingType: Int, id: Int, acceptedAnswer: Option[Int], parentId: Option[Int], score: Int, tags: Option[String]) extends Serializable
 
 
 /** The main class */
 object StackOverflow extends StackOverflow {
 
-  @transient lazy val conf: SparkConf = new SparkConf().setMaster("local").setAppName("StackOverflow")
+  @transient lazy val conf: SparkConf = new SparkConf().setMaster("local[*]").setAppName("StackOverflow")
   @transient lazy val sc: SparkContext = new SparkContext(conf)
 
   /** Main function */
   def main(args: Array[String]): Unit = {
 
-    val lines   = sc.textFile("src/main/resources/stackoverflow/stackoverflow.csv")
-    val raw     = rawPostings(lines)
-    val grouped = groupedPostings(raw)
-    val scored  = scoredPostings(grouped)
-    val vectors = vectorPostings(scored)
+    // The lines from the csv file as strings
+    val lines: RDD[String] = sc.textFile("src/main/resources/stackoverflow/stackoverflow.csv")
+    // The raw Posting entries for each line
+    val raw: RDD[Posting] = rawPostings(lines)
+    // Questions and answers grouped together
+    val grouped: RDD[(Int, Iterable[(Posting, Posting)])] = groupedPostings(raw)
+    // Questions and scores
+    val scored: RDD[(Posting, Int)]  = scoredPostings(grouped)
+    // Pairs of (language, score) for each question
+    val vectors: RDD[(Int, Int)] = vectorPostings(scored)
 //    assert(vectors.count() == 2121822, "Incorrect number of vectors: " + vectors.count())
 
     val means   = kmeans(sampleVectors(vectors), vectors, debug = true)
@@ -76,13 +95,36 @@ class StackOverflow extends Serializable {
     })
 
 
-  /** Group the questions and answers together */
+  /**
+    * Group the questions and answers together
+    *
+    * Ideally, we want to obtain an RDD with the pairs of
+    * <code>(Question, Iterable[Answer])</code>. However, grouping on the
+    * question posting directly is expensive because the question posting
+    * information is not available globally without shuffling data around the
+    * cluster. So, a better alternative is to match on the QID, which is
+    * already available in answer postings via their <code>partentId</code> field
+    * thus producing an <code>RDD[(QID, Iterable[(Question, Answer))]</code>.
+    */
   def groupedPostings(postings: RDD[Posting]): RDD[(Int, Iterable[(Posting, Posting)])] = {
-    ???
+    val questions = postings
+      .filter(posting => posting.postingType == 1)
+      .map(posting => (posting.id, posting))
+    val answers = postings
+      .filter(posting => posting.postingType == 2 && posting.parentId.isDefined)
+      .map(posting => (posting.parentId.get, posting))
+
+    questions.join(answers).groupByKey()
   }
 
 
-  /** Compute the maximum score for each posting */
+  /**
+    * Compute the maximum score for each posting.
+    *
+    * Returns an RDD containing pairs of (a) questions and (b) the score of the
+    * answer with the highest score (note: this does not have to be the answer
+    * marked as "acceptedAnswer"!).
+    */
   def scoredPostings(grouped: RDD[(Int, Iterable[(Posting, Posting)])]): RDD[(Posting, Int)] = {
 
     def answerHighScore(as: Array[Posting]): Int = {
@@ -97,11 +139,44 @@ class StackOverflow extends Serializable {
       highScore
     }
 
-    ???
+    grouped // RDD[(Int, Iterable[(Posting, Posting)])]
+      .values // RDD[Iterable[(Posting, Posting)]]
+      .map { qa => (qa.head._1, answerHighScore(qa.map(_._2).toArray))
+    }
+
   }
 
-
-  /** Compute the vectors for the kmeans */
+  /**
+    * Compute the vectors for the kmeans.
+    *
+    * Transform the scored RDD into a vectors RDD containing the vectors to be
+    * clustered. In our case, the vectors should be pairs with two components (in
+    * the listed order!):
+    *   i. Index of the language (in the langs list) multiplied by the langSpread
+    *      factor.
+    *  ii. The highest answer score (computed above).
+    *
+    * The langSpread factor is provided. It corresponds to how far
+    * away are languages from the clustering algorithm's point of view. Its value
+    * is set to 50000 and it, basically, makes sure posts about different
+    * programming languages have at least distance 50000 using the distance
+    * measure provided by the euclideanDist function. For a value of 50000, the
+    * languages are too far away to be clustered together at all, resulting in a
+    * clustering that only takes scores into account for each language
+    * (similarly to partitioning the data across languages and then clustering
+    * based on the score). A more interesting (but less scientific) clustering
+    * occurs when langSpread is set to 1 (we can't set it to 0, as it loses
+    * language information completely), where we cluster according to the score.
+    *
+    * * See which language dominates the top questions when langSpread is set to 1?
+    * * Do you think that partitioning your data would help?
+    * * Have you thought about persisting some of your data? Can you think of why
+    *   persisting your data in memory may be helpful for this algorithm?
+    * * Of the non-empty clusters, how many clusters have "Java" as their label
+    *   (based on the majority of questions, see above)? Why?
+    * * Only considering the "Java clusters", which clusters stand out and why?
+    * * How are the "C# clusters" different compared to the "Java clusters"?
+    */
   def vectorPostings(scored: RDD[(Posting, Int)]): RDD[(Int, Int)] = {
     /** Return optional index of first language that occurs in `tags`. */
     def firstLangInTag(tag: Option[String], ls: List[String]): Option[Int] = {
@@ -117,7 +192,12 @@ class StackOverflow extends Serializable {
       }
     }
 
-    ???
+    val v = scored.map {
+      case (question, highestScore) =>
+        val landIndx = firstLangInTag(question.tags, langs).get
+        (landIndx * langSpread, highestScore)
+    }
+    v.cache()
   }
 
 
@@ -172,9 +252,19 @@ class StackOverflow extends Serializable {
 
   /** Main kmeans computation */
   @tailrec final def kmeans(means: Array[(Int, Int)], vectors: RDD[(Int, Int)], iter: Int = 1, debug: Boolean = false): Array[(Int, Int)] = {
-    val newMeans = means.clone() // you need to compute newMeans
+    val newMeans = means.clone()
 
-    // TODO: Fill in the newMeans array
+    // we classify the vectors according to their closest mean
+    val closest = vectors.map { point => // (language, score)
+      (findClosest(point, means), point)
+    }.groupByKey() // (closestmean, (language, score))
+
+    // after we have classified the vectors we updated the mean values
+    // to the average of all the points in the cluster
+    closest.mapValues { points: Iterable[(Int, Int)] =>
+      averageVectors(points)
+    }.collect().map(m => newMeans.update(m._1, m._2))
+
     val distance = euclideanDistance(means, newMeans)
 
     if (debug) {
@@ -196,9 +286,6 @@ class StackOverflow extends Serializable {
       newMeans
     }
   }
-
-
-
 
   //
   //
@@ -260,23 +347,30 @@ class StackOverflow extends Serializable {
     ((comp1 / count).toInt, (comp2 / count).toInt)
   }
 
-
-
-
   //
   //
   //  Displaying results:
   //
   //
   def clusterResults(means: Array[(Int, Int)], vectors: RDD[(Int, Int)]): Array[(String, Double, Int, Int)] = {
-    val closest = vectors.map(p => (findClosest(p, means), p))
-    val closestGrouped = closest.groupByKey()
+    val closest = vectors.map(p => (findClosest(p, means), p)) // (closest, (lang, score))
+    val closestGrouped = closest.groupByKey() // (closest, List((lang, score)))
 
-    val median = closestGrouped.mapValues { vs =>
-      val langLabel: String   = ??? // most common language in the cluster
-      val langPercent: Double = ??? // percent of the questions in the most common language
-      val clusterSize: Int    = ???
-      val medianScore: Int    = ???
+    val median = closestGrouped.mapValues { vs => // Iterable[(langSpread, score)]
+      val langIndx = vs.groupBy(_._1).maxBy(_._2.size)._1
+      // most common language in the cluster
+      val langLabel: String = langs(langIndx / langSpread)
+      val clusterSize: Int = vs.size
+      // percent of the questions in the most common language
+      val langPercent: Double = 100 * vs.count(li => li._1 == langIndx) / clusterSize.toDouble
+      val sortedScores = vs.map(_._2).toList.sorted
+      val midIndx = clusterSize / 2
+      val medianScore: Int =  {
+        if (clusterSize % 2 == 0)
+          (sortedScores(midIndx - 1) + sortedScores(midIndx)) / 2
+        else
+          sortedScores(midIndx)
+      }
 
       (langLabel, langPercent, clusterSize, medianScore)
     }

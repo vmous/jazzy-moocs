@@ -1,4 +1,2 @@
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.1.0")
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.11")
-
-addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M15")
+// Check ~/.sbt/0.13/plugins/plugins.sbt because the decision to use some
+// specific sbt plugin is per-user, rather than per-project.
