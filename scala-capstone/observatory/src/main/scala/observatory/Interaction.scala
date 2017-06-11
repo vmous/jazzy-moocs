@@ -73,7 +73,7 @@ object Interaction {
       (-60, Color(0,0,0)))
 
     val tileLoc = tileLocation(zoom, x, y)
-    val twoToPowerOfZoom = math.pow(2, zoom)
+    val twoToPowerOfZoom = math.pow(2, zoom.toDouble)
     val latitudeSpacing = 180d/(twoToPowerOfZoom * TILE_SIZE)
     val longitudeSpacing = 360d/(twoToPowerOfZoom * TILE_SIZE)
 
@@ -84,7 +84,7 @@ object Interaction {
       longCoord = tileLoc.lon + xCoord * longitudeSpacing
     } yield (xCoord, yCoord, Location(latCoord, longCoord))
 
-    val pixels: scala.collection.parallel.ParSeq[Pixel] = coords.toParArray.map{ case (xCoord, yCoord, location) =>
+    val pixels: ParSeq[Pixel] = coords.toParArray.map{ case (xCoord, yCoord, location) =>
       val predTemp = predictTemperature(temperatures, location)
       val color = interpolateColor(colors, predTemp)
       Pixel(color.red, color.green, color.blue, 127)

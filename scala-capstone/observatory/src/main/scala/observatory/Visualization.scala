@@ -46,20 +46,25 @@ object Visualization {
     * @return The predicted temperature at `location`
     */
   def predictTemperature(temperatures: Iterable[(Location, Double)], location: Location): Double = {
-
-   val (numerator: Double, denominator: Double) = temperatures.par
-     .map { case (knownLocation: Location, knownTemperature: Double) => {
-       val d = distance(knownLocation, location)
-       if (d < 1) {
-         // Station closer than 1km was found. Use its temperature directly.
-         return knownTemperature
-       }
-       else {
-         val wix = 1 / pow(d, SHEPARD_POWER)
-         (wix, knownTemperature)
-       }
-     }}
-     .foldLeft[(Double, Double)]((0.0, 0.0)) { case ((accA, accB), (wix, ui)) => (accA + (wix * ui), accB + wix) }
+    // For larger datasets can use `temperatures.par` but the Coursera grader
+    // seems to be causing timeouts for unit-tests, probably due to excessive
+    // parallelization for the small testing datasets.
+    // The best solution that would scale better for the real application would
+    // be to have a threshold on the `temperatures` size above which to use
+    // parallilization.
+    val (numerator: Double, denominator: Double) = temperatures
+      .map { case (knownLocation: Location, knownTemperature: Double) => {
+        val d = distance(knownLocation, location)
+        if (d < 1) {
+          // Station closer than 1km was found. Use its temperature directly.
+          return knownTemperature
+        }
+        else {
+          val wix = 1 / pow(d, SHEPARD_POWER)
+          (wix, knownTemperature)
+        }
+      }}
+      .foldLeft[(Double, Double)]((0.0, 0.0)) { case ((accA, accB), (wix, ui)) => (accA + (wix * ui), accB + wix) }
 
     numerator / denominator
   }
@@ -118,8 +123,7 @@ object Visualization {
       Pixel(color.red, color.green, color.blue, 100)
     }
 
-   Image(360, 180, pixels.toArray)
+    Image(360, 180, pixels.toArray)
   }
 
 }
-

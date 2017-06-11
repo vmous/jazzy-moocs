@@ -60,6 +60,7 @@ object Extraction {
       .withColumn("date", dateUDF($"month", $"day"))
       .select("date", "location", "temperature")
       .as[Record]
+      .cache()
 
     new Iterable[Record] {
       def iterator = scala.collection.JavaConversions.asScalaIterator(joined.toLocalIterator)
