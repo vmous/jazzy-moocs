@@ -25,7 +25,7 @@ object Visualization2 {
     d10: Double,
     d11: Double
   ): Double = {
-    ???
+    d00 * (1 - x) * (1 - y) + d10 * x * (1 - y) + d01 * (1 - x) * y + d11 * x * y
   }
 
   /**
@@ -43,7 +43,33 @@ object Visualization2 {
     x: Int,
     y: Int
   ): Image = {
-    ???
+    val scale = 256
+    val ps: Seq[(Int, Int)] = for (
+      py <- 0 until scale;
+      px <- 0 until scale
+    ) yield (px, py)
+
+    val pixels = ps.par.map{
+      case (px, py) => {
+        val l = Interaction.tileLocation(zoom + 8, x * scale + px, y * scale + py)
+        val lat0 = if (l.lat >= 0) l.lat.toInt + 1 else l.lat.toInt
+        val lon0 = if (l.lon >= 0) l.lon.toInt else l.lon.toInt - 1
+        val lat1 = lat0 - 1
+        val lon1 = lon0 + 1
+        val t = bilinearInterpolation(
+          l.lon - lon0,
+          lat0 - l.lat,
+          grid(lat0, lon0),
+          grid(lat1, lon0),
+          grid(lat0, lon1),
+          grid(lat1, lon1)
+        )
+        val c = Visualization.interpolateColor(colors, t)
+        Pixel(c.red, c.green, c.blue, 127)
+      }
+    }
+
+    Image(scale, scale, pixels.toArray)
   }
 
 }
